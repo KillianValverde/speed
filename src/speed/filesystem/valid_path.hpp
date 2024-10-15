@@ -213,8 +213,8 @@ public:
     [[nodiscard]] bool is_valid(std::error_code* err_code = nullptr) override
     {
         if (speed::system::filesystem::access(TpComponent::c_str(),
-                        speed::system::filesystem::access_modes::WRITE,
-                        speed::system::filesystem::file_type::REGULAR_FILE, err_code) ||
+                    speed::system::filesystem::access_modes::WRITE,
+                    speed::system::filesystem::file_types::REGULAR_FILE, err_code) ||
             speed::system::filesystem::touch(TpComponent::c_str(), 0755, err_code))
         {
             return TpComponent::is_valid(err_code);
@@ -244,8 +244,8 @@ public:
     [[nodiscard]] bool is_valid(std::error_code* err_code = nullptr) override
     {
         if (speed::system::filesystem::access(TpComponent::c_str(),
-                        speed::system::filesystem::access_modes::WRITE,
-                        speed::system::filesystem::file_type::DIRECTORY, err_code) ||
+                    speed::system::filesystem::access_modes::WRITE,
+                    speed::system::filesystem::file_types::DIRECTORY, err_code) ||
             speed::system::filesystem::mkdir(TpComponent::c_str(), 0755, err_code))
         {
             return TpComponent::is_valid(err_code);

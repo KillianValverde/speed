@@ -18,37 +18,43 @@
  */
 
 /**
- * @file        speed/filesystem/filesystem.hpp
- * @brief       filesystem main header.
+ * @file        speed/filesystem/forward_declarations.hpp
+ * @brief       forward_declarations header.
  * @author      Killian Valverde
- * @date        2018/11/25
+ * @date        2024/10/15
  */
 
-#ifndef SPEED_FILESYSTEM_FILESYSTEM_HPP
-#define SPEED_FILESYSTEM_FILESYSTEM_HPP
-
-#include "forward_declarations.hpp"
-#include "directory_iteration.hpp"
-#include "valid_path.hpp"
+#ifndef SPEED_FILESYSTEM_FORWARD_DECLARATIONS_HPP
+#define SPEED_FILESYSTEM_FORWARD_DECLARATIONS_HPP
 
 
-namespace speed {
+namespace speed::filesystem {
 
 
-/**
- * @brief       Contains filesystem interaction resources.
- */
-namespace filesystem {}
+class directory_iteration;
 
+class valid_path;
 
-#ifndef SPEED_DISABLE_ALIAS
+template<typename TpComponent>
+class read_path_decorator;
 
-/**
- * @brief       Contains filesystem interaction resources.
- */
-namespace fsys = filesystem;
+template<typename TpComponent>
+class write_path_decorator;
 
-#endif
+template<typename TpComponent>
+class execute_path_decorator;
+
+template<typename TpComponent>
+class regular_file_path_decorator;
+
+template<typename TpComponent>
+class directory_path_decorator;
+
+template<typename TpComponent>
+class output_regular_file_path_decorator;
+
+template<typename TpComponent>
+class output_directory_path_decorator;
 
 
 }
