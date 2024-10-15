@@ -18,10 +18,10 @@
  */
 
 /**
- * @file        speed_gtest/iostream_test/valid_path_test.cpp
- * @brief       valid_path unit test.
+ * @file        speed_gtest/filesystem_test/directory_iteration_test.cpp
+ * @brief       directory_iteration unit test.
  * @author      Killian Valverde
- * @date        2024/05/20
+ * @date        2024/10/14
  */
 
 #include <gtest/gtest.h>
@@ -29,9 +29,25 @@
 #include "speed/filesystem/filesystem.hpp"
 
 
-TEST(filesystem_valid_path, basic)
+TEST(filesystem_directory_iteration, basic)
 {
-    // std::error_code err_code;
-    // speed::filesystem::rw_regular_file_path rfle("./file.txt");
-    // EXPECT_TRUE(rfle.is_valid(&err_code));
+    std::string str;
+    speed::filesystem::directory_iteration dir_iteration(".", "^.*\\.cpp$",
+            speed::system::filesystem::file_types::REGULAR_FILE);
+
+    for (auto dir_it = dir_iteration.begin(); dir_it != dir_iteration.end(); ++dir_it)
+    {
+
+        EXPECT_NO_THROW(str = dir_it->string());
+    }
+
+    for (auto dir_it = dir_iteration.cbegin(); dir_it != dir_iteration.cend(); ++dir_it)
+    {
+        EXPECT_NO_THROW(str = dir_it->string());
+    }
+
+    for (auto& x : dir_iteration)
+    {
+        EXPECT_NO_THROW(str = x.string());
+    }
 }

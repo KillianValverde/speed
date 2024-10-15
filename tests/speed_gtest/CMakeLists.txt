@@ -19,6 +19,7 @@ set(SPEED_CONTAINERS_TEST_SOURCE_FILES
 )
 
 set(SPEED_FILESYSTEM_TEST_SOURCE_FILES
+        filesystem_test/directory_iteration_test.cpp
         filesystem_test/valid_path_test.cpp
 )
 
