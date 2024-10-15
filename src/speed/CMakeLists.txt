@@ -18,7 +18,7 @@ set(SPEED_ARGPARSE_SOURCE_FILES
         argparse/basic_arg_parser.hpp
         argparse/basic_arg_parser_setter.hpp
         argparse/basic_arg_value.hpp
-        argparse/basic_at_least_one_found.hpp
+        argparse/basic_one_or_more_constraint.hpp
         argparse/basic_base_arg.hpp
         argparse/basic_base_arg_setter.hpp
         argparse/basic_help_arg.hpp
@@ -31,7 +31,7 @@ set(SPEED_ARGPARSE_SOURCE_FILES
         argparse/basic_key_value_arg_setter.hpp
         argparse/basic_keyless_arg.hpp
         argparse/basic_keyless_arg_setter.hpp
-        argparse/basic_mutually_exclusive.hpp
+        argparse/basic_mutually_exclusive_constraint.hpp
         argparse/basic_type_caster.hpp
         argparse/basic_value_arg.hpp
         argparse/basic_value_arg_setter.hpp
@@ -52,6 +52,13 @@ set(SPEED_CONTAINERS_SOURCE_FILES
         containers/static_cache.hpp
 )
 
+set(SPEED_CRYPTOGRAPHY_SOURCE_FILES
+        cryptography/cryptography.cpp
+        cryptography/cryptography.hpp
+        cryptography/city_hash.cpp
+        cryptography/city_hash.hpp
+)
+
 set(SPEED_ERRORS_SOURCE_FILES
         errors/error_category_base.hpp
         errors/errors.cpp
@@ -70,6 +77,8 @@ set(SPEED_FILESYSTEM_SOURCE_FILES
         filesystem/directory_iteration.hpp
         filesystem/filesystem.cpp
         filesystem/filesystem.hpp
+        filesystem/forward_declarations.hpp
+        filesystem/operations.hpp
         filesystem/valid_path.hpp
 )
 
@@ -117,42 +126,52 @@ set(SPEED_SCALARS_SOURCE_FILES
 )
 
 set(SPEED_STRINGUTILS_SOURCE_FILES
+        stringutils/forward_declarations.hpp
         stringutils/operations.hpp
         stringutils/stringutils.cpp
         stringutils/stringutils.hpp
 )
 
 set(SPEED_SYSTEM_SOURCE_FILES
-        system/api/glibc/filesystem/directory_entity_extension.hpp
+        system/api/api.hpp
+        system/api/glibc/codecs/codecs.hpp
+        system/api/glibc/codecs/operations.cpp
+        system/api/glibc/codecs/operations.hpp
+        system/api/glibc/filesystem/basic_directory_entity_extension.hpp
+        system/api/glibc/filesystem/filesystem.hpp
         system/api/glibc/filesystem/operations.cpp
         system/api/glibc/filesystem/operations.hpp
+        system/api/glibc/glibc.hpp
         system/api/glibc/process/operations.cpp
         system/api/glibc/process/operations.hpp
+        system/api/glibc/process/process.hpp
         system/api/glibc/terminal/operations.cpp
         system/api/glibc/terminal/operations.hpp
+        system/api/glibc/terminal/terminal.hpp
         system/api/glibc/time/operations.cpp
         system/api/glibc/time/operations.hpp
-        system/api/glibc/filesystem/filesystem.hpp
-        system/api/glibc/process/process.hpp
-        system/api/glibc/terminal/terminal.hpp
         system/api/glibc/time/time.hpp
-        system/api/glibc/glibc.hpp
-        system/api/winapi/filesystem/directory_entity_extension.hpp
+        system/api/winapi/codecs/codecs.hpp
+        system/api/winapi/codecs/operations.cpp
+        system/api/winapi/codecs/operations.hpp
+        system/api/winapi/filesystem/basic_directory_entity_extension.hpp
+        system/api/winapi/filesystem/filesystem.hpp
         system/api/winapi/filesystem/operations.cpp
         system/api/winapi/filesystem/operations.hpp
         system/api/winapi/process/operations.cpp
         system/api/winapi/process/operations.hpp
+        system/api/winapi/process/process.hpp
         system/api/winapi/terminal/operations.cpp
         system/api/winapi/terminal/operations.hpp
+        system/api/winapi/terminal/terminal.hpp
         system/api/winapi/time/operations.cpp
         system/api/winapi/time/operations.hpp
-        system/api/winapi/filesystem/filesystem.hpp
-        system/api/winapi/process/process.hpp
-        system/api/winapi/terminal/terminal.hpp
         system/api/winapi/time/time.hpp
         system/api/winapi/winapi.hpp
-        system/api/api.hpp
+        system/codecs/codecs.hpp
+        system/codecs/operations.hpp
         system/compatibility/compatibility.hpp
+        system/compatibility/multiplatform_main_with_unicode_support.hpp
         system/compatibility/platform.hpp
         system/compatibility/select_api.hpp
         system/errors/errors.hpp
@@ -161,15 +180,18 @@ set(SPEED_SYSTEM_SOURCE_FILES
         system/exceptions/exceptions.hpp
         system/filesystem/access_modes.hpp
         system/filesystem/basic_directory_entity.hpp
-        system/filesystem/file_type.hpp
+        system/filesystem/file_types.hpp
         system/filesystem/filesystem.hpp
         system/filesystem/operations.hpp
+        system/filesystem/types.hpp
         system/process/operations.hpp
         system/process/process.hpp
+        system/process/types.hpp
         system/terminal/operations.hpp
         system/terminal/terminal.hpp
         system/terminal/text_attribute.hpp
         system/time/operations.hpp
+        system/time/system_time.hpp
         system/time/time.hpp
         system/time/time_specification.cpp
         system/time/time_specification.hpp
@@ -178,7 +200,6 @@ set(SPEED_SYSTEM_SOURCE_FILES
 )
 
 set(SPEED_TIME_SOURCE_FILES
-        time/child_cpu_chrono.hpp
         time/chrono_base.cpp
         time/chrono_base.hpp
         time/chrono_states.hpp
@@ -195,6 +216,7 @@ set(SPEED_TYPE_CASTING_SOURCE_FILES
         type_casting/error_codes.hpp
         type_casting/error_conditions.hpp
         type_casting/exception.hpp
+        type_casting/forward_declarations.hpp
         type_casting/try_type_cast.hpp
         type_casting/type_cast.hpp
         type_casting/type_caster_base.hpp
@@ -212,6 +234,7 @@ set(SPEED_SOURCE_FILES
         ${SPEED_ALGORITHM_SOURCE_FILES}
         ${SPEED_ARGPARSE_SOURCE_FILES}
         ${SPEED_CONTAINERS_SOURCE_FILES}
+        ${SPEED_CRYPTOGRAPHY_SOURCE_FILES}
         ${SPEED_ERRORS_SOURCE_FILES}
         ${SPEED_EXCEPTIONS_SOURCE_FILES}
         ${SPEED_FILESYSTEM_SOURCE_FILES}
@@ -233,6 +256,7 @@ set(SPEED_SOURCE_FILES
 add_library(speed_algorithm STATIC ${SPEED_ALGORITHM_SOURCE_FILES})
 add_library(speed_argparse STATIC ${SPEED_ARGPARSE_SOURCE_FILES})
 add_library(speed_containers STATIC ${SPEED_CONTAINERS_SOURCE_FILES})
+add_library(speed_cryptography STATIC ${SPEED_CRYPTOGRAPHY_SOURCE_FILES})
 add_library(speed_errors STATIC ${SPEED_ERRORS_SOURCE_FILES})
 add_library(speed_exception STATIC ${SPEED_EXCEPTIONS_SOURCE_FILES})
 add_library(speed_filesystem STATIC ${SPEED_FILESYSTEM_SOURCE_FILES})
@@ -252,6 +276,7 @@ add_library(speed STATIC ${SPEED_SOURCE_FILES})
 set_target_properties(speed_algorithm PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(speed_argparse PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(speed_containers PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(speed_cryptography PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(speed_errors PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(speed_exception PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(speed_filesystem PROPERTIES LINKER_LANGUAGE CXX)
@@ -272,6 +297,7 @@ set(suffix "$<IF:$<CONFIG:Debug>,d,>")
 set_target_properties(speed_algorithm PROPERTIES OUTPUT_NAME speed_algorithm${suffix})
 set_target_properties(speed_argparse PROPERTIES OUTPUT_NAME speed_argparse${suffix})
 set_target_properties(speed_containers PROPERTIES OUTPUT_NAME speed_containers${suffix})
+set_target_properties(speed_cryptography PROPERTIES OUTPUT_NAME speed_containers${suffix})
 set_target_properties(speed_errors PROPERTIES OUTPUT_NAME speed_errors${suffix})
 set_target_properties(speed_exception PROPERTIES OUTPUT_NAME speed_exception${suffix})
 set_target_properties(speed_filesystem PROPERTIES OUTPUT_NAME speed_filesystem${suffix})
@@ -343,6 +369,7 @@ target_link_libraries(speed
         speed_algorithm
         speed_argparse
         speed_containers
+        speed_cryptography
         speed_errors
         speed_exception
         speed_filesystem
@@ -362,6 +389,7 @@ target_link_libraries(speed
 install(TARGETS speed_algorithm LIBRARY DESTINATION lib)
 install(TARGETS speed_argparse LIBRARY DESTINATION lib)
 install(TARGETS speed_containers LIBRARY DESTINATION lib)
+install(TARGETS speed_cryptography LIBRARY DESTINATION lib)
 install(TARGETS speed_errors LIBRARY DESTINATION lib)
 install(TARGETS speed_exception LIBRARY DESTINATION lib)
 install(TARGETS speed_filesystem LIBRARY DESTINATION lib)
