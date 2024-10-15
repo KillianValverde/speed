@@ -187,6 +187,15 @@ TEST(system_filesystem, rmdir)
 }
 
 
+TEST(system_filesystem, shortcut)
+{
+    ASSERT_TRUE(speed::system::filesystem::shortcut(".",
+            "6bd55a4e9d240fe0bcc137ad1eaeaf67517cfe4c"));
+    ASSERT_TRUE(speed::system::filesystem::unlink("6bd55a4e9d240fe0bcc137ad1eaeaf67517cfe4c"
+            SPEED_SYSTEM_FILESYSTEM_SHORTCUT_EXTENSION_CSTR));
+}
+
+
 TEST(system_filesystem, touch)
 {
     ASSERT_TRUE(speed::system::filesystem::touch("6bd55a4e9d240fe0bcc137ad1eaeaf67517cfe4c"));
