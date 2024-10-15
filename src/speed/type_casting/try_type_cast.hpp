@@ -702,7 +702,7 @@ template<typename TpTarget, typename TpSource>
 inline bool try_type_cast(
     const TpSource& arg, 
     TpTarget* res, 
-    std::error_code* err_code = nullptr
+    std::error_code* err_code
 ) noexcept
 {
     return __private::__try_type_cast(arg, res, err_code);

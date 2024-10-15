@@ -27,8 +27,10 @@
 #ifndef SPEED_TYPE_CASTING_TYPE_CASTING_HPP
 #define SPEED_TYPE_CASTING_TYPE_CASTING_HPP
 
+#include "forward_declarations.hpp"
 #include "basic_type_caster.hpp"
 #include "error_category.hpp"
+#include "error_codes.hpp"
 #include "error_conditions.hpp"
 #include "exception.hpp"
 #include "try_type_cast.hpp"
