@@ -179,6 +179,15 @@ TEST(system_filesystem, mkdir)
 }
 
 
+TEST(system_filesystem, mkdir_recursively)
+{
+    // ASSERT_TRUE(speed::system::filesystem::mkdir_recursively(
+    //         "f57475c9df7a624a05e842b5f852336015de44ba"
+    //         SPEED_SYSTEM_FILESYSTEM_SLASH_CSTR
+    //         "87e54df0169fce4cec5c064d8f1dfa6162388226"));
+}
+
+
 TEST(system_filesystem, opendir)
 {
     speed::system::filesystem::directory_entity dir_ent;
