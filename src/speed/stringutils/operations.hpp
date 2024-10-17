@@ -367,13 +367,13 @@ TpChar* strcut(TpChar* str, const TpIntegral val, bool erase_val = false) noexce
             if (erase_val)
             {
                 *lst = '\0';
-                return lst > str ? lst - 1 : lst;
             }
             else
             {
                 lst[1] = '\0';
-                return lst;
             }
+
+            return lst;
         }
     }
     
