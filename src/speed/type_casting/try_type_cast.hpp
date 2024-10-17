@@ -453,6 +453,7 @@ __try_type_cast(const TpSource& arg, TpTarget* res, std::error_code* err_code) n
 }
 
 
+// TODO: Range error?
 /**
  * @brief       Tries to convert a c_string into a wstring.
  * @param       arg : The value to convert.
@@ -468,26 +469,7 @@ std::enable_if_t<
 >
 __try_type_cast(const TpSource& arg, TpTarget* res, std::error_code* err_code) noexcept
 {
-    try
-    {
-        std::mbstate_t state = std::mbstate_t();
-        std::decay_t<std::add_const_t<TpSource>> src = arg;
-        std::size_t len = std::mbsrtowcs(nullptr, &src, 0, &state);
-
-        if (len == static_cast<std::size_t>(-1))
-        {
-            assign_type_casting_error_code(
-                    static_cast<int>(error_codes::RANGE_ERROR),
-                    err_code);
-
-            return false;
-        }
-
-        res->resize(len);
-        std::mbsrtowcs(&(*res)[0], &src, len + 1, &state);
-        return true;
-    }
-    catch (...)
+    if (!speed::system::codecs::convert_c_string_to_wstring(arg, res))
     {
         assign_type_casting_error_code(
                 static_cast<int>(error_codes::RANGE_ERROR),
@@ -495,6 +477,8 @@ __try_type_cast(const TpSource& arg, TpTarget* res, std::error_code* err_code) n
 
         return false;
     }
+
+    return true;
 }
 
 
@@ -545,26 +529,7 @@ std::enable_if_t<
 >
 __try_type_cast(const TpSource& arg, TpTarget* res, std::error_code* err_code) noexcept
 {
-    try
-    {
-        std::mbstate_t state = std::mbstate_t();
-        std::decay_t<std::add_const_t<TpSource>> src = arg;
-        std::size_t len = std::wcsrtombs(nullptr, &src, 0, &state);
-
-        if (len == static_cast<std::size_t>(-1))
-        {
-            assign_type_casting_error_code(
-                    static_cast<int>(error_codes::RANGE_ERROR),
-                    err_code);
-
-            return false;
-        }
-
-        res->resize(len);
-        std::wcsrtombs(&(*res)[0], &src, len + 1, &state);
-        return true;
-    }
-    catch (...)
+    if (!speed::system::codecs::convert_w_string_to_string(arg, res))
     {
         assign_type_casting_error_code(
                 static_cast<int>(error_codes::RANGE_ERROR),
@@ -572,9 +537,12 @@ __try_type_cast(const TpSource& arg, TpTarget* res, std::error_code* err_code) n
 
         return false;
     }
+
+    return true;
 }
 
 
+// TODO: Fix this, it is not implemented correctly and the enable_if is also not as correct.
 /**
  * @brief       Tries to convert a c_string into a basic_regex.
  * @param       arg : The value to convert.
