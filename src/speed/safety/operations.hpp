@@ -30,6 +30,7 @@
 #include <limits>
 #include <stdexcept>
 
+#include "../system/system.hpp"
 #include "exception.hpp"
 
 
@@ -143,7 +144,7 @@ template<typename TpTarget, typename TpValue>
 inline TpTarget addm(
         TpTarget trg,
         const TpValue& val
-)
+) noexcept
 {
     constexpr TpTarget max_trg = std::numeric_limits<TpTarget>::max();
     
@@ -170,7 +171,7 @@ template<typename TpTarget, typename... TpValues>
 inline TpTarget addml(
         TpTarget trg,
         const TpValues&... vals
-)
+) noexcept
 {
     constexpr TpTarget max_trg = std::numeric_limits<TpTarget>::max();
     
