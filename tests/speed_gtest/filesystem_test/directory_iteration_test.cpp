@@ -29,15 +29,19 @@
 #include "speed/filesystem/filesystem.hpp"
 
 
-TEST(filesystem_directory_iteration, basic)
+TEST(filesystem_directory_iteration, elementary)
 {
     std::string str;
-    speed::filesystem::directory_iteration dir_iteration(".", "^.*\\.cpp$",
-            speed::system::filesystem::file_types::REGULAR_FILE);
+
+    speed::filesystem::directory_iteration dir_iteration(".");
+    dir_iteration.regex_to_match("^.*$")
+                 .file_types(speed::system::filesystem::file_types::ALL)
+                 .access_modes(speed::system::filesystem::access_modes::READ)
+                 .follow_symbolic_links(false)
+                 .recursivity_level(~0ull);
 
     for (auto dir_it = dir_iteration.begin(); dir_it != dir_iteration.end(); ++dir_it)
     {
-
         EXPECT_NO_THROW(str = dir_it->string());
     }
 
