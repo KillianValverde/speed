@@ -155,7 +155,7 @@ public:
         /** Current file. */
         std::filesystem::path cur_fle_;
 
-        /** Stack of directories entities used to explore in recursivelly the filesystem. */
+        /** Stack of directories entities used to explore recursivelly the filesystem. */
         std::stack<directory_entity> path_stck_;
 
         /** Set of visited inodes to avoid infinite recursions in case of fs corruptions. */
@@ -174,28 +174,20 @@ public:
     /**
      * @brief       Constructor with parameters.
      * @param       root_pth : Path where to do the iteration.
-     * @param       regex_to_mtch : Regex that all the iterated files have to match.
-     * @param       file_typs : List of file types that are allowed to be iterated.
-     * @param       access_mods : Access mods that all the iterated files have to match.
-     * @param       recursivity_levl : Maximum level of recursivity allowed. If the maximum value
-     *              is specified there is no limit.
      */
-    template<typename TpString_ = std::string>
-    explicit directory_iteration(
-            std::filesystem::path root_pth,
-            TpString_&& regex_to_mtch = "^.*$",
-            speed::system::filesystem::file_types file_typs =
-                    speed::system::filesystem::file_types::ALL,
-            speed::system::filesystem::access_modes access_mods =
-                    speed::system::filesystem::access_modes::READ,
-            std::uint64_t recursivity_levl = ~0ull
-    )
-            : root_pth_(std::move(root_pth))
-            , regex_to_mtch_(speed::type_casting::type_cast<string_type>(
-                    std::forward<TpString_>(regex_to_mtch)))
-            , file_typs_(file_typs)
-            , access_mods_(access_mods)
-            , recursivity_levl_(recursivity_levl)
+    template<
+            typename TpPath_,
+            typename = std::enable_if_t<
+                    !std::is_base_of<directory_iteration, std::decay_t<TpPath_>>::value
+            >
+    >
+    explicit directory_iteration(TpPath_&& root_pth)
+            : root_pth_(std::forward<TpPath_>(root_pth))
+            , regex_to_mtch_(speed::type_casting::type_cast<string_type>("^.*$"))
+            , file_typs_(speed::system::filesystem::file_types::ALL)
+            , access_mods_(speed::system::filesystem::access_modes::READ)
+            , recursivity_levl_(~0ull)
+            , follow_symbolic_lnks_(false)
     {
     }
 
@@ -235,6 +227,63 @@ public:
         return const_iterator(nullptr);
     }
 
+    /**
+     * @brief       Specify the access modes that the files are mandatory to have.
+     * @param       access_mods : Access modes that the files are mandatory to have.
+     * @return      The object who call the method.
+     */
+    inline directory_iteration& access_modes(system::filesystem::access_modes access_mods)
+    {
+        access_mods_ = access_mods;
+        return *this;
+    }
+
+    /**
+     * @brief       Specify the file types that will be considered during the iteration.
+     * @param       file_typs : File types that will be considered during the iteration.
+     * @return      The object who call the method.
+     */
+    inline directory_iteration& file_types(system::filesystem::file_types file_typs)
+    {
+        file_typs_ = file_typs;
+        return *this;
+    }
+
+    /**
+     * @brief       Specify wether or not the symbolic links will be followed.
+     * @param       follow_symbolic_lnks : If true the symbolic links will be followed.
+     * @return      The object who call the method.
+     */
+    inline directory_iteration& follow_symbolic_links(bool follow_symbolic_lnks)
+    {
+        follow_symbolic_lnks_ = follow_symbolic_lnks;
+        return *this;
+    }
+
+    /**
+     * @brief       Specify the level of recursivity that .
+     * @param       recursivity_level : Access modes that the files are mandatory to have.
+     * @return      The object who call the method.
+     */
+    inline directory_iteration& recursivity_level(std::uint64_t recursivity_levl)
+    {
+        recursivity_levl_ = recursivity_levl;
+        return *this;
+    }
+
+    /**
+     * @brief       Specify the access modes that the files are mandatory to have.
+     * @param       access_mods : Access modes that the files are mandatory to have.
+     * @return      The object who call the method.
+     */
+    template<typename TpString_>
+    inline directory_iteration& regex_to_match(TpString_&& regex_to_mtch)
+    {
+        regex_to_mtch_ = speed::type_casting::type_cast<string_type>(
+                std::forward<TpString_>(regex_to_mtch));
+        return *this;
+    }
+
 private:
     /** The root directory of the iteration. */
     std::filesystem::path root_pth_;
@@ -250,6 +299,9 @@ private:
 
     /** Access mods that all the iterated files have to match. */
     system::filesystem::access_modes access_mods_;
+
+    /** Specify wheter or not follow symbolic links during the iteration. */
+    bool follow_symbolic_lnks_;
 
     friend class const_iterator;
 };

@@ -129,8 +129,12 @@ bool directory_iteration::const_iterator::open_directory()
     std::uint64_t ino = speed::system::filesystem::get_file_inode(cur_dir_.c_str());
 
     if (current_recursivity_levl_ > composit_->recursivity_levl_ ||
-        vistd_inos_.contains(ino))
+        vistd_inos_.contains(ino) ||
+        (!composit_->follow_symbolic_lnks_ &&
+                speed::system::filesystem::is_symlink(cur_dir_.c_str())))
     {
+        cur_fle_ = cur_dir_;
+        cur_dir_ = cur_dir_.parent_path();
         return false;
     }
 
