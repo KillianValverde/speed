@@ -319,11 +319,20 @@ TEST_F(argparse_arg_parser, parse_keyless_args)
         "/home/user/Desktop",
         "-s", "45",
         "/home/user/Pictures",
-        "/home/user/Videos"
+        "/home/user/Videos",
+        "/home/user/Documents",
+        "-n",
+        "78",
+        "/home/user/Favorites",
+        "79"
     };
 
     std::vector<std::size_t> secs;
-    std::vector<std::string> pths;
+    std::vector<std::string> pths1;
+    std::vector<std::string> pths2;
+    std::vector<std::string> pths3;
+    std::vector<std::size_t> numbr1;
+    std::vector<std::size_t> numbr2;
 
     ap.add_key_value_arg("--seconds", "-s")
             .description("Set seconds.")
@@ -333,20 +342,48 @@ TEST_F(argparse_arg_parser, parse_keyless_args)
 
     ap.add_keyless_arg("DESTINATION1")
             .description("Destination directory.")
-            .store_into(&pths);
+            .store_into(&pths1);
 
     ap.add_keyless_arg("DESTINATION2")
             .description("Destination directory.")
-            .store_into(&pths);
+            .store_into(&pths2);
+
+    ap.add_keyless_arg("DESTINATION3")
+            .description("Destination directory.")
+            .store_into(&pths3)
+            .minmax_values(1, 2);
+
+    ap.add_keyless_arg("NUMBER1")
+            .description("Some number.")
+            .store_into(&numbr1)
+            .minmax_values(1, 2);
+
+    ap.add_keyless_arg("NUMBER2")
+            .description("Some number.")
+            .store_into(&numbr2)
+            .minmax_values(1, 2);
 
     EXPECT_NO_THROW(ap.parse_args(argv.size(), argv));
+    EXPECT_TRUE(secs[0] == 45);
     EXPECT_TRUE(ap.count_values_found("DESTINATION1") == 1);
-    EXPECT_TRUE(pths[0] == "/home/user/Desktop");
+    EXPECT_TRUE(pths1[0] == "/home/user/Desktop");
     EXPECT_TRUE(ap.get_front_as<std::string>("DESTINATION1") == "/home/user/Desktop");
     EXPECT_TRUE(ap.count_values_found("DESTINATION2") == 1);
-    EXPECT_TRUE(pths[1] == "/home/user/Pictures");
+    EXPECT_TRUE(pths2[0] == "/home/user/Pictures");
     EXPECT_TRUE(ap.get_front_as<std::string>("DESTINATION2") == "/home/user/Pictures");
-    EXPECT_TRUE(secs[0] == 45);
+    EXPECT_TRUE(ap.count_values_found("DESTINATION3") == 2);
+    EXPECT_TRUE(pths3[0] == "/home/user/Videos");
+    EXPECT_TRUE(pths3[1] == "/home/user/Documents");
+    EXPECT_TRUE(ap.get_front_as<std::string>("DESTINATION3") == "/home/user/Videos");
+    EXPECT_TRUE(ap.count_values_found("NUMBER1") == 1);
+    EXPECT_TRUE(numbr1[0] == 78);
+    EXPECT_TRUE(ap.get_front_as<std::size_t>("NUMBER1") == 78);
+    EXPECT_TRUE(ap.count_values_found("NUMBER2") == 2);
+    EXPECT_TRUE(numbr2.size() == 1);
+    EXPECT_TRUE(numbr2[0] == 79);
+    EXPECT_TRUE(ap.get_front_as<std::string>("NUMBER2") == "/home/user/Favorites");
+    EXPECT_TRUE(ap.get_at_as<std::size_t>("NUMBER2", 1) == 79);
+    EXPECT_TRUE(ap.has_errors());
 }
 
 
