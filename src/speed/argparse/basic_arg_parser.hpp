@@ -398,8 +398,9 @@ public:
         keyless_arg_type *kyless_arg = nullptr;
         base_arg_type *prev_arg = nullptr;
         vector_type<key_arg_type*> chaind_args;
-        bool val_has_prefx;
-        bool succs;
+        bool insertd;
+        bool prefix_err;
+        auto cur_keyless_arg_it = kyless_arg_list_.begin();
 
         for (cur_state = dfa_t::START; cur_state != dfa_t::FINISH; )
         {
@@ -496,41 +497,41 @@ public:
                 continue;
 
             case dfa_t::PARSE_KEYLESS_ARG:
-                kyless_arg = nullptr;
-                val_has_prefx = value_has_prefix(cur_argv);
-                for (auto& x : kyless_arg_list_)
+                insertd = false;
+                while (cur_keyless_arg_it != kyless_arg_list_.end() &&
+                       (*cur_keyless_arg_it)->max_values_reached())
                 {
-                    if ((!val_has_prefx || x->is_flag_set(arg_flags::VALUES_WITH_PREFIX)) &&
-                        x->try_add_value(cur_argv))
+                    ++cur_keyless_arg_it;
+                }
+                while (cur_keyless_arg_it != kyless_arg_list_.end())
+                {
+                    kyless_arg = *cur_keyless_arg_it;
+                    prefix_err = has_value_with_prefix_error(kyless_arg, cur_argv);
+                    if (prefix_err || !kyless_arg->try_add_value(cur_argv))
                     {
-                        kyless_arg = x;
-                        if (static_cast<base_arg_type*>(kyless_arg) !=  prev_arg)
+                        if (kyless_arg->min_values_reached() ||
+                            (kyless_arg->get_number_of_values() > 0 && prefix_err))
                         {
-                            kyless_arg->execute_action();
-                            kyless_arg->set_found(true);
+                            ++cur_keyless_arg_it;
+                            continue;
+                        }
+                        else if (!prefix_err)
+                        {
+                            kyless_arg->add_value(std::move(cur_argv));
+                            insertd = true;
                         }
                         break;
                     }
+                    insertd = true;
+                    break;
                 }
-                if (kyless_arg == nullptr)
+                if (insertd)
                 {
-                    for (auto& x : kyless_arg_list_)
+                    if (static_cast<base_arg_type*>(kyless_arg) !=  prev_arg)
                     {
-                        if (!x->max_values_reached())
-                        {
-                            x->add_value(std::move(cur_argv));
-                            kyless_arg = x;
-                            if (static_cast<base_arg_type*>(kyless_arg) !=  prev_arg)
-                            {
-                                kyless_arg->execute_action();
-                                kyless_arg->set_found(true);
-                            }
-                            break;
-                        }
+                        kyless_arg->execute_action();
+                        kyless_arg->set_found(true);
                     }
-                }
-                if (kyless_arg != nullptr)
-                {
                     ++cur_idx;
                     cur_state = dfa_t::READ_ARG;
                     prev_arg = kyless_arg;
@@ -1626,6 +1627,21 @@ private:
     }
 
     /**
+     * @brief       Allows knowing whether a string can't be an argument value due to the
+     *              presece of a prefix while the value argument doesn't allow it.
+     * @param       val_arg : The value arg to consider for the checking.
+     * @param       str : The string to check.
+     * @return      If function was successful true is returned, otherwise false is returned.
+     */
+    [[nodiscard]] bool has_value_with_prefix_error(
+            value_arg_type* val_arg,
+            const string_type& str
+    ) const
+    {
+        return value_has_prefix(str) && !val_arg->is_flag_set(arg_flags::VALUES_WITH_PREFIX);
+    }
+
+    /**
      * @brief       Allows knowing whether the parse of the arguements have been done.
      * @return      If function was successful true is returned, otherwise false is returned.
      */
@@ -1707,7 +1723,7 @@ private:
      */
     [[nodiscard]] bool string_can_be_value(value_arg_type* val_arg, const string_type& str) const
     {
-        return (!value_has_prefix(str) || val_arg->is_flag_set(arg_flags::VALUES_WITH_PREFIX)) &&
+        return !has_value_with_prefix_error(val_arg, str) &&
                (!arg_key_exists(str) || val_arg->is_flag_set(arg_flags::KEYS_AS_VALUES)) &&
                !arg_has_eq_operator(str) && !chained_args_exists(str);
     }
