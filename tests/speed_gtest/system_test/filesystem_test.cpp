@@ -86,6 +86,20 @@ TEST(system_filesystem, closedir)
 }
 
 
+TEST(system_filesystem, file_exists)
+{
+    ASSERT_TRUE(speed::system::filesystem::file_exists("."));
+}
+
+
+TEST(system_filesystem, get_modification_time)
+{
+    speed::system::time::system_time system_tme;
+    
+    ASSERT_TRUE(speed::system::filesystem::get_modification_time(".", &system_tme));
+}
+
+
 TEST(system_filesystem, get_file_inode)
 {
     ASSERT_TRUE(speed::system::filesystem::get_file_inode(".") != ~0ull);
