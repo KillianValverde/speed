@@ -176,8 +176,8 @@ ap.add_key_arg("-cpp")
 ap.add_key_arg("-py")
         .description("Interpret in Python language.");
 
-ap.add_at_least_one_found_constraint("-c", "-cpp", "-py");
-ap.add_mutually_exclusive_constraint("-c", "-cpp", "-py");
+ap.add_constraint_one_or_more("-c", "-cpp", "-py");
+ap.add_constraint_mutually_exclusive("-c", "-cpp", "-py");
 ```
 
 ### Help menus
