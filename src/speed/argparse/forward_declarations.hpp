@@ -65,7 +65,7 @@ template<typename TpBase, typename TpAllocator>
 class basic_one_or_more_constraint;
 
 template<typename TpBase, typename TpAllocator>
-class basic_mutually_exclusive;
+class basic_mutually_exclusive_constraint;
 
 template<typename TpAllocator>
 class basic_help_menu;

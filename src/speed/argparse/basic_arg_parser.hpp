@@ -54,7 +54,7 @@
 #include "basic_key_value_arg_setter.hpp"
 #include "basic_keyless_arg.hpp"
 #include "basic_keyless_arg_setter.hpp"
-#include "basic_mutually_exclusive.hpp"
+#include "basic_mutually_exclusive_constraint.hpp"
 #include "basic_version_arg.hpp"
 #include "basic_version_arg_setter.hpp"
 #include "forward_declarations.hpp"
@@ -134,7 +134,8 @@ public:
             arg_constraint_type, TpAllocator>;
 
     /** Type that represents a mutually exclusive constraint for a set of arguments. */
-    using mutually_exclusive_type = basic_mutually_exclusive<arg_constraint_type, TpAllocator>;
+    using mutually_exclusive_constraint_type = basic_mutually_exclusive_constraint<
+            arg_constraint_type, TpAllocator>;
 
     /** Type that represents a help menu. */
     using help_menu_type = basic_help_menu<TpAllocator>;
@@ -352,9 +353,9 @@ public:
      *              applies.
      */
     template<typename... Ts_>
-    void add_mutually_exclusive_constraint(const Ts_&... kys)
+    void add_constraint_mutually_exclusive(const Ts_&... kys)
     {
-        mutually_exclusive_type* mutually_excl;
+        mutually_exclusive_constraint_type* mutually_excl;
         speed::memory::allocate_and_construct(mutually_exclusive_type_alloc_, mutually_excl,
                                               this, kys...);
         constrnts_.push_back(mutually_excl);
@@ -1109,14 +1110,14 @@ private:
     void delete_arg_constraint(arg_constraint_type*& arg) noexcept
     {
         one_or_more_constraint_type* at_least_one_fnd;
-        mutually_exclusive_type* mutually_excl;
+        mutually_exclusive_constraint_type* mutually_excl;
 
         if ((at_least_one_fnd = dynamic_cast<one_or_more_constraint_type*>(arg)) != nullptr)
         {
             speed::memory::destruct_and_deallocate(at_least_one_found_type_alloc_,
                                                    at_least_one_fnd);
         }
-        else if ((mutually_excl = dynamic_cast<mutually_exclusive_type*>(arg)) != nullptr)
+        else if ((mutually_excl = dynamic_cast<mutually_exclusive_constraint_type*>(arg)) != nullptr)
         {
             speed::memory::destruct_and_deallocate(mutually_exclusive_type_alloc_,
                                                    mutually_excl);
@@ -1955,7 +1956,7 @@ private:
     allocator_type<one_or_more_constraint_type> at_least_one_found_type_alloc_;
 
     /** Allocator of the mutually_exclusive_type. */
-    allocator_type<mutually_exclusive_type> mutually_exclusive_type_alloc_;
+    allocator_type<mutually_exclusive_constraint_type> mutually_exclusive_type_alloc_;
     
     friend class basic_arg_key<TpAllocator>;
     friend class basic_arg_value<TpAllocator>;

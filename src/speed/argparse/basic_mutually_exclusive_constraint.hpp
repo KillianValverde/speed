@@ -18,14 +18,14 @@
  */
 
 /**
- *  @file       speed/argparse/basic_mutually_exclusive.hpp
- *  @brief      basic_mutually_exclusive class header.
+ *  @file       speed/argparse/basic_mutually_exclusive_constraint.hpp
+ *  @brief      basic_mutually_exclusive_constraint class header.
  *  @author     Killian Valverde
  *  @date       2024/05/16
  */
 
-#ifndef SPEED_ARGPARSE_BASIC_MUTUALLY_EXCLUSIVE_HPP
-#define SPEED_ARGPARSE_BASIC_MUTUALLY_EXCLUSIVE_HPP
+#ifndef SPEED_ARGPARSE_BASIC_MUTUALLY_EXCLUSIVE_CONSTRAINT_HPP
+#define SPEED_ARGPARSE_BASIC_MUTUALLY_EXCLUSIVE_CONSTRAINT_HPP
 
 #include <memory>
 #include <string>
@@ -51,7 +51,7 @@ namespace speed::argparse {
  *              specified arguments is found in the program call.
  */
 template<typename TpBase, typename TpAllocator>
-class basic_mutually_exclusive : public TpBase
+class basic_mutually_exclusive_constraint : public TpBase
 {
 public:
     /** Base class type. */
@@ -111,7 +111,7 @@ public:
      * @param       kys : The arguments keys in which apply the constraint.
      */
     template<typename... Ts_>
-    explicit basic_mutually_exclusive(arg_parser_type* arg_parsr, const Ts_&... kys)
+    explicit basic_mutually_exclusive_constraint(arg_parser_type* arg_parsr, const Ts_&... kys)
             : base_type(arg_parsr, kys...)
     {
         if (base_type::get_base_args_size() <= 1)
@@ -132,32 +132,32 @@ public:
      * @brief       Copy constructor.
      * @param       rhs : Object to copy.
      */
-    basic_mutually_exclusive(const basic_mutually_exclusive& rhs) = delete;
+    basic_mutually_exclusive_constraint(const basic_mutually_exclusive_constraint& rhs) = delete;
     
     /**
      * @brief       Move constructor.
      * @param       rhs : Object to move.
      */
-    basic_mutually_exclusive(basic_mutually_exclusive&& rhs) noexcept = default;
+    basic_mutually_exclusive_constraint(basic_mutually_exclusive_constraint&& rhs) noexcept = default;
     
     /**
      * @brief       Destructor.
      */
-    ~basic_mutually_exclusive() = default;
+    ~basic_mutually_exclusive_constraint() = default;
     
     /**
      * @brief       Copy assignment operator.
      * @param       rhs : Object to copy.
      * @return      The object who call the method.
      */
-    basic_mutually_exclusive& operator =(const basic_mutually_exclusive& rhs) = delete;
+    basic_mutually_exclusive_constraint& operator =(const basic_mutually_exclusive_constraint& rhs) = delete;
     
     /**
      * @brief       Move assignment operator.
      * @param       rhs : Object to move.
      * @return      The object who call the method.
      */
-    basic_mutually_exclusive& operator =(basic_mutually_exclusive&& rhs) noexcept = default;
+    basic_mutually_exclusive_constraint& operator =(basic_mutually_exclusive_constraint&& rhs) noexcept = default;
     
     /**
      * @brief       Allows knowing whether a relational constraint is violed.
