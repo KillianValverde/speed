@@ -18,14 +18,14 @@
  */
 
 /**
- *  @file       speed/argparse/basic_at_least_one_found.hpp
- *  @brief      basic_at_least_one_found class header.
+ *  @file       speed/argparse/basic_one_or_more_constraint.hpp
+ *  @brief      basic_one_or_more_constraint class header.
  *  @author     Killian Valverde
  *  @date       2024/05/09
  */
 
-#ifndef SPEED_ARGPARSE_BASIC_AT_LEAST_ONE_FOUND_HPP
-#define SPEED_ARGPARSE_BASIC_AT_LEAST_ONE_FOUND_HPP
+#ifndef SPEED_ARGPARSE_BASIC_ONE_OR_MORE_CONSTRAINT_HPP
+#define SPEED_ARGPARSE_BASIC_ONE_OR_MORE_CONSTRAINT_HPP
 
 #include <memory>
 #include <string>
@@ -46,12 +46,13 @@
 namespace speed::argparse {
 
 
+// TODO: Change the display characteres to not unicod ones. Too many problems on windows.
 /**
  * @brief       Class used to represent a constraint that verifies that at least one of the
  *              specified arguments has been found in the program call.
  */
 template<typename TpBase, typename TpAllocator>
-class basic_at_least_one_found : public TpBase
+class basic_one_or_more_constraint : public TpBase
 {
 public:
     /** Base class type. */
@@ -111,7 +112,7 @@ public:
      * @param       kys : The arguments keys in which apply the constraint.
      */
     template<typename... Ts_>
-    explicit basic_at_least_one_found(arg_parser_type* arg_parsr, const Ts_&... kys)
+    explicit basic_one_or_more_constraint(arg_parser_type* arg_parsr, const Ts_&... kys)
             : base_type(arg_parsr, kys...)
     {
         if (base_type::get_base_args_size() < 2)
@@ -132,32 +133,32 @@ public:
      * @brief       Copy constructor.
      * @param       rhs : Object to copy.
      */
-    basic_at_least_one_found(const basic_at_least_one_found& rhs) = delete;
+    basic_one_or_more_constraint(const basic_one_or_more_constraint& rhs) = delete;
     
     /**
      * @brief       Move constructor.
      * @param       rhs : Object to move.
      */
-    basic_at_least_one_found(basic_at_least_one_found&& rhs) noexcept = default;
+    basic_one_or_more_constraint(basic_one_or_more_constraint&& rhs) noexcept = default;
     
     /**
      * @brief       Destructor.
      */
-    ~basic_at_least_one_found() = default;
+    ~basic_one_or_more_constraint() = default;
     
     /**
      * @brief       Copy assignment operator.
      * @param       rhs : Object to copy.
      * @return      The object who call the method.
      */
-    basic_at_least_one_found& operator =(const basic_at_least_one_found& rhs) = delete;
+    basic_one_or_more_constraint& operator =(const basic_one_or_more_constraint& rhs) = delete;
     
     /**
      * @brief       Move assignment operator.
      * @param       rhs : Object to move.
      * @return      The object who call the method.
      */
-    basic_at_least_one_found& operator =(basic_at_least_one_found&& rhs) noexcept = default;
+    basic_one_or_more_constraint& operator =(basic_one_or_more_constraint&& rhs) noexcept = default;
     
     /**
      * @brief       Allows knowing whether a relational constraint is violed.

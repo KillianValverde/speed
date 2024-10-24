@@ -62,7 +62,7 @@ template<typename TpAllocator>
 class basic_arg_constraint;
 
 template<typename TpBase, typename TpAllocator>
-class basic_at_least_one_found;
+class basic_one_or_more_constraint;
 
 template<typename TpBase, typename TpAllocator>
 class basic_mutually_exclusive;

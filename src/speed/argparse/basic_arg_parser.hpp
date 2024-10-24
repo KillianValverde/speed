@@ -43,7 +43,7 @@
 #include "arg_value_error_flags.hpp"
 #include "basic_arg_constraint.hpp"
 #include "basic_arg_parser_setter.hpp"
-#include "basic_at_least_one_found.hpp"
+#include "basic_one_or_more_constraint.hpp"
 #include "basic_help_arg.hpp"
 #include "basic_help_arg_setter.hpp"
 #include "basic_help_menu.hpp"
@@ -130,7 +130,8 @@ public:
     using arg_constraint_type = basic_arg_constraint<TpAllocator>;
 
     /** Type that represents an 'at least one found' constraint for a set of arguments. */
-    using at_least_one_found_type = basic_at_least_one_found<arg_constraint_type, TpAllocator>;
+    using one_or_more_constraint_type = basic_one_or_more_constraint<
+            arg_constraint_type, TpAllocator>;
 
     /** Type that represents a mutually exclusive constraint for a set of arguments. */
     using mutually_exclusive_type = basic_mutually_exclusive<arg_constraint_type, TpAllocator>;
@@ -336,9 +337,9 @@ public:
      *              applies.
      */
     template<typename... Ts_>
-    void add_at_least_one_found_constraint(const Ts_&... kys)
+    void add_constraint_one_or_more(const Ts_&... kys)
     {
-        at_least_one_found_type* at_least_one_fnd;
+        one_or_more_constraint_type* at_least_one_fnd;
         speed::memory::allocate_and_construct(at_least_one_found_type_alloc_, at_least_one_fnd,
                                               this, kys...);
         constrnts_.push_back(at_least_one_fnd);
@@ -1107,10 +1108,10 @@ private:
      */
     void delete_arg_constraint(arg_constraint_type*& arg) noexcept
     {
-        at_least_one_found_type* at_least_one_fnd;
+        one_or_more_constraint_type* at_least_one_fnd;
         mutually_exclusive_type* mutually_excl;
 
-        if ((at_least_one_fnd = dynamic_cast<at_least_one_found_type*>(arg)) != nullptr)
+        if ((at_least_one_fnd = dynamic_cast<one_or_more_constraint_type*>(arg)) != nullptr)
         {
             speed::memory::destruct_and_deallocate(at_least_one_found_type_alloc_,
                                                    at_least_one_fnd);
@@ -1951,7 +1952,7 @@ private:
     allocator_type<keyless_arg_type> keyless_arg_type_alloc_;
 
     /** Allocator of the at_least_one_found_type. */
-    allocator_type<at_least_one_found_type> at_least_one_found_type_alloc_;
+    allocator_type<one_or_more_constraint_type> at_least_one_found_type_alloc_;
 
     /** Allocator of the mutually_exclusive_type. */
     allocator_type<mutually_exclusive_type> mutually_exclusive_type_alloc_;
