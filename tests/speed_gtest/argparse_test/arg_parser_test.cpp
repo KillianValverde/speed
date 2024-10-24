@@ -550,8 +550,8 @@ TEST_F(argparse_arg_parser, parse_alof_constraint)
 
     ap.add_key_arg("-r", "--recursive")
             .description("Execute the process in a recursive way.");
-
-    ap.add_at_least_one_found_constraint("-a", "-l", "-r");
+    
+    ap.add_constraint_one_or_more("-a", "-l", "-r");
 
     ap.parse_args(argv1.size(), argv1);
     EXPECT_TRUE(ap.has_errors());
@@ -624,8 +624,8 @@ TEST_F(argparse_arg_parser, parse_all_constraints)
 
     ap.add_key_arg("-r", "--recursive")
             .description("Execute the process in a recursive way.");
-
-    ap.add_at_least_one_found_constraint("-a", "-l", "-r");
+    
+    ap.add_constraint_one_or_more("-a", "-l", "-r");
     ap.add_mutually_exclusive_constraint("-a", "-l", "-r");
 
     ap.parse_args(argv1.size(), argv1);
