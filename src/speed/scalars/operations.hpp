@@ -42,7 +42,7 @@ template<typename TpScalar>
 TpScalar count_digits(TpScalar val) noexcept
 {
     TpScalar n_digits = 1;
-    TpScalar abs_val = std::abs(val);
+    TpScalar abs_val = std::abs((int)val);
     
     while (abs_val > 9)
     {
