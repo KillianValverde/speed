@@ -49,7 +49,7 @@ constexpr std::uint8_t onehot_to_binary(const TpOnehot& val)
     {
         if (val & (1 << i))
         {
-            return static_cast<uint8_t>(i + 1);
+            return static_cast<std::uint8_t>(i + 1);
         }
     }
     
