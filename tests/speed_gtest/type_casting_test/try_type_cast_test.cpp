@@ -115,17 +115,39 @@ TEST(type_casting_try_type_cast, c_string_to_integral_unsigned)
 
 TEST(type_casting_try_type_cast, c_string_to_regex)
 {
-    std::regex rgx;
-
-    ASSERT_TRUE(speed::type_casting::try_type_cast<std::regex>("^.*$", &rgx));
+    std::regex rgx1;
+    std::wregex rgx2;
+    
+    ASSERT_TRUE(speed::type_casting::try_type_cast<std::regex>("^.*$", &rgx1));
+    ASSERT_TRUE(std::regex_match("hello", rgx1));
+    ASSERT_TRUE(speed::type_casting::try_type_cast<std::wregex>(L"^.*$", &rgx2));
+    ASSERT_TRUE(std::regex_match(L"hello", rgx2));
+    
+    ASSERT_TRUE(speed::type_casting::try_type_cast<std::regex>(L"^☆☆☆$", &rgx1));
+    ASSERT_TRUE(std::regex_match("☆☆☆", rgx1));
+    ASSERT_TRUE(speed::type_casting::try_type_cast<std::wregex>("^☆☆☆$", &rgx2));
+    ASSERT_TRUE(std::regex_match(L"☆☆☆", rgx2));
 }
 
 
 TEST(type_casting_try_type_cast, c_string_to_path)
 {
-    std::filesystem::path pth;
+    std::filesystem::path pth1;
+    std::filesystem::path pth2;
     
-    ASSERT_TRUE(speed::type_casting::try_type_cast<std::filesystem::path>(".", &pth));
+    ASSERT_TRUE(speed::type_casting::try_type_cast<std::filesystem::path>(".", &pth1));
+    ASSERT_TRUE(pth1 == ".");
+    
+    if constexpr (std::is_same_v<std::filesystem::path::value_type, char>)
+    {
+        ASSERT_TRUE(speed::type_casting::try_type_cast<std::filesystem::path>(L"☆☆☆", &pth2));
+        ASSERT_TRUE(pth2 == "☆☆☆");
+    }
+    else
+    {
+        ASSERT_TRUE(speed::type_casting::try_type_cast<std::filesystem::path>("☆☆☆", &pth2));
+        ASSERT_TRUE(pth2 == L"☆☆☆");
+    }
 }
 
 
@@ -138,4 +160,6 @@ TEST(type_casting_try_type_cast, c_string_to_valid_path)
             ".", &reg_pth));
     ASSERT_TRUE(speed::type_casting::try_type_cast<speed::filesystem::r_directory_path>(
             ".", &dir_pth));
+    ASSERT_TRUE(speed::type_casting::try_type_cast<speed::filesystem::r_directory_path>(
+            L".", &dir_pth));
 }
