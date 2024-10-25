@@ -593,7 +593,7 @@ public:
      * @param       holdr : The collection that will get the cast result of each value.
      */
     template<typename TpValue_, std::size_t Nm>
-    void set_holder(array_type<TpValue_, Nm>* holdr)
+    void set_holders(array_type<TpValue_, Nm>* holdr)
     {
         castrs_.clear();
 
@@ -608,7 +608,7 @@ public:
      * @param       holdr : The collection that will get the cast result of each value.
      */
     template<typename TpValue_>
-    void set_holder(vector_type<TpValue_>* holdr)
+    void set_holders(vector_type<TpValue_>* holdr)
     {
         castrs_.clear();
 
@@ -623,7 +623,7 @@ public:
      * @param       holdr : The collection that will get the cast result of each value.
      */
     template<typename TpValue_>
-    void set_holder(deque_type<TpValue_>* holdr)
+    void set_holders(deque_type<TpValue_>* holdr)
     {
         castrs_.clear();
 
@@ -638,7 +638,7 @@ public:
      * @param       holdr : The collection that will get the cast result of each value.
      */
     template<typename TpValue_>
-    void set_holder(queue_type<TpValue_>* holdr)
+    void set_holders(queue_type<TpValue_>* holdr)
     {
         castrs_.clear();
 
@@ -653,7 +653,7 @@ public:
      * @param       holdr : The collection that will get the cast result of each value.
      */
     template<typename TpValue_>
-    void set_holder(priority_queue_type<TpValue_>* holdr)
+    void set_holders(priority_queue_type<TpValue_>* holdr)
     {
         castrs_.clear();
 
@@ -668,7 +668,7 @@ public:
      * @param       holdr : The collection that will get the cast result of each value.
      */
     template<typename TpValue_>
-    void set_holder(stack_type<TpValue_>* holdr)
+    void set_holders(stack_type<TpValue_>* holdr)
     {
         castrs_.clear();
 
@@ -683,7 +683,7 @@ public:
      * @param       holdr : The collection that will get the cast result of each value.
      */
     template<typename TpValue_>
-    void set_holder(forward_list_type<TpValue_>* holdr)
+    void set_holders(forward_list_type<TpValue_>* holdr)
     {
         castrs_.clear();
 
@@ -698,7 +698,7 @@ public:
      * @param       holdr : The collection that will get the cast result of each value.
      */
     template<typename TpValue_>
-    void set_holder(list_type<TpValue_>* holdr)
+    void set_holders(list_type<TpValue_>* holdr)
     {
         castrs_.clear();
 
@@ -713,7 +713,7 @@ public:
      * @param       holdr : The collection that will get the cast result of each value.
      */
     template<typename TpValue_>
-    void set_holder(set_type<TpValue_>* holdr)
+    void set_holders(set_type<TpValue_>* holdr)
     {
         castrs_.clear();
 
@@ -728,7 +728,7 @@ public:
      * @param       holdr : The collection that will get the cast result of each value.
      */
     template<typename TpValue_>
-    void set_holder(unordered_set_type<TpValue_>* holdr)
+    void set_holders(unordered_set_type<TpValue_>* holdr)
     {
         castrs_.clear();
 
@@ -743,7 +743,7 @@ public:
      * @param       holdr : The collection that will get the cast result of each value.
      */
     template<typename TpValue_>
-    void set_holder(unordered_multiset_type<TpValue_>* holdr)
+    void set_holders(unordered_multiset_type<TpValue_>* holdr)
     {
         castrs_.clear();
 
