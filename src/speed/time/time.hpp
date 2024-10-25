@@ -27,7 +27,6 @@
 #ifndef SPEED_TIME_TIME_HPP
 #define SPEED_TIME_TIME_HPP
 
-#include "child_cpu_chrono.hpp"
 #include "chrono_base.hpp"
 #include "chrono_states.hpp"
 #include "cpu_chrono.hpp"
