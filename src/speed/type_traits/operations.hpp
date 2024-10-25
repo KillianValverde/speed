@@ -481,6 +481,26 @@ struct is_path
 
 
 /**
+ * @brief       Trait class that tries to obtains the fundamental type of Tp.
+ */
+template<typename Tp>
+struct fundamental_type
+{
+    using type = std::remove_cv_t<
+            std::remove_pointer_t<
+                    std::remove_all_extents_t<
+                            std::remove_cvref_t<Tp>>>>;
+};
+
+
+/**
+ * @brief       Trait class that tries to obtains the fundamental type of Tp.
+ */
+template <typename Tp>
+using fundamental_type_t = typename fundamental_type<Tp>::type;
+
+
+/**
  * @brief       Trait class that try to obtains the underlying type of enum type T.
  */
 template<typename TpEnum>
