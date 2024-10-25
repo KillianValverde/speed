@@ -27,11 +27,47 @@
 #ifndef SPEED_MATH_OPERATIONS_HPP
 #define SPEED_MATH_OPERATIONS_HPP
 
-#include <limits>
-#include <stdexcept>
+#include <type_traits>
 
 
 namespace speed::math {
+
+
+/**
+ * @brief       Get the absolute number of a specified integral.
+ * @param       val : The integral number to get the absolute number.
+ * @return      The absolute number of the specified integral.
+ */
+template<typename TpIntegral>
+inline std::enable_if_t<
+        std::is_signed_v<TpIntegral>,
+        TpIntegral
+>
+abs(TpIntegral val) noexcept
+{
+    if (val < 0)
+    {
+        return val * -1;
+    }
+    
+    return val;
+}
+
+
+/**
+ * @brief       Get the absolute number of a specified integral.
+ * @param       val : The integral number to get the absolute number.
+ * @return      The absolute number of the specified integral.
+ */
+template<typename TpIntegral>
+inline std::enable_if_t<
+        std::is_unsigned_v<TpIntegral>,
+        TpIntegral
+>
+abs(TpIntegral val) noexcept
+{
+    return val;
+}
 
 
 }
