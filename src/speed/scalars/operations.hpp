@@ -27,7 +27,7 @@
 #ifndef SPEED_SCALARS_OPERATIONS_HPP
 #define SPEED_SCALARS_OPERATIONS_HPP
 
-#include <cstdlib>
+#include "../math/math.hpp"
 
 
 namespace speed::scalars {
@@ -38,11 +38,11 @@ namespace speed::scalars {
  * @param       val : The scalar to get the number of digits.
  * @return      The number of digits of the given scalar.
  */
-template<typename TpScalar>
-TpScalar count_digits(TpScalar val) noexcept
+template<typename TpIntegral>
+TpIntegral count_digits(TpIntegral val) noexcept
 {
-    TpScalar n_digits = 1;
-    TpScalar abs_val = std::abs((int)val);
+    TpIntegral n_digits = 1;
+    TpIntegral abs_val = speed::math::abs(val);
     
     while (abs_val > 9)
     {
