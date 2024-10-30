@@ -183,12 +183,15 @@ public:
     >
     explicit directory_iteration(TpPath_&& root_pth)
             : root_pth_(std::forward<TpPath_>(root_pth))
-            , regex_to_mtch_(speed::type_casting::type_cast<string_type>("^.*$"))
+            , regex_to_mtch_()
+            , regex_to_mtch_str_(speed::type_casting::type_cast<string_type>("^.*$"))
             , file_typs_(speed::system::filesystem::file_types::ALL)
             , access_mods_(speed::system::filesystem::access_modes::READ)
             , recursivity_levl_(~0ull)
             , follow_symbolic_lnks_(false)
+            , case_sensitve_(false)
     {
+        regex_to_match(regex_to_mtch_str_);
     }
 
     /**
@@ -239,6 +242,22 @@ public:
     }
 
     /**
+     * @brief       Specify the access modes that the files are mandatory to have.
+     * @param       access_mods : Access modes that the files are mandatory to have.
+     * @return      The object who call the method.
+     */
+    inline directory_iteration& case_sensitive(bool case_sensitve)
+    {
+        if (case_sensitve_ != case_sensitve)
+        {
+            case_sensitve_ = case_sensitve;
+            regex_to_match(regex_to_mtch_str_);
+        }
+        
+        return *this;
+    }
+
+    /**
      * @brief       Specify the file types that will be considered during the iteration.
      * @param       file_typs : File types that will be considered during the iteration.
      * @return      The object who call the method.
@@ -272,15 +291,25 @@ public:
     }
 
     /**
-     * @brief       Specify the access modes that the files are mandatory to have.
-     * @param       access_mods : Access modes that the files are mandatory to have.
+     * @brief       Specify the regex that all the file names have to match.
+     * @param       regex_to_mtch : Regex string that all the file names have to match.
      * @return      The object who call the method.
      */
     template<typename TpString_>
     inline directory_iteration& regex_to_match(TpString_&& regex_to_mtch)
     {
-        regex_to_mtch_ = speed::type_casting::type_cast<string_type>(
-                std::forward<TpString_>(regex_to_mtch));
+        typename regex_type::flag_type flg;
+        
+        if (!case_sensitve_)
+        {
+            flg = regex_type::ECMAScript | regex_type::icase;
+        }
+        else
+        {
+            flg = regex_type::ECMAScript;
+        }
+        regex_to_mtch_.assign(speed::type_casting::type_cast<string_type>(
+                std::forward<TpString_>(regex_to_mtch)), flg);
         return *this;
     }
 
@@ -290,6 +319,9 @@ private:
 
     /** Regex that all the iterated files have to match. */
     regex_type regex_to_mtch_;
+
+    /** Regex that all the iterated files have to match. */
+    string_type regex_to_mtch_str_;
 
     /** Maximum level of recursivity allowed. */
     std::uint64_t recursivity_levl_;
@@ -302,6 +334,9 @@ private:
 
     /** Specify wheter or not follow symbolic links during the iteration. */
     bool follow_symbolic_lnks_;
+    
+    /** Specify wheter or not the regex will be case sensitive. */
+    bool case_sensitve_;
 
     friend class const_iterator;
 };
