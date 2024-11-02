@@ -147,7 +147,7 @@ TEST(system_filesystem, is_directory)
 
 TEST(system_filesystem, is_fifo)
 {
-    ASSERT_TRUE(!speed::system::filesystem::is_fifo("."));
+    ASSERT_TRUE(!speed::system::filesystem::is_pipe("."));
 }
 
 
