@@ -27,7 +27,7 @@
 #ifndef SPEED_CRYPTOGRAPHY_CRYPTOGRAPHY_HPP
 #define SPEED_CRYPTOGRAPHY_CRYPTOGRAPHY_HPP
 
-#include "operations.hpp"
+#include "city_hash.hpp"
 
 
 namespace speed {

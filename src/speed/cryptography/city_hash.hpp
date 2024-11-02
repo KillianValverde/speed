@@ -18,16 +18,45 @@
  */
 
 /**
- * @file        speed/cryptography/operations.cpp
- * @brief       operations functions source.
+ * @file        speed/cryptography/city_hash.hpp
+ * @brief       city_hash functions header.
  * @author      Killian Valverde
  * @date        2024/11/01
  */
 
-#include "operations.hpp"
+#ifndef SPEED_CRYPTOGRAPHY_CITY_HASH_HPP
+#define SPEED_CRYPTOGRAPHY_CITY_HASH_HPP
+
+#include <cstdint>
+
+#include "../stringutils/stringutils.hpp"
 
 
 namespace speed::cryptography {
 
 
+/**
+ * @brief       Compute the city-hash of a specific value.
+ * @param       ptr : Pointer to the value to hash.
+ * @param       sz : Size of the value to hash.
+ * @return      The hash value.
+ */
+std::uint64_t city_hash_64(const void* ptr, std::size_t sz);
+
+
+/**
+ * @brief       Compute the city-hash of a specific cstr.
+ * @param       str : Cstr to hash.
+ * @return      The hash value.
+ */
+template<typename TpChar>
+inline std::uint64_t city_hash_64(const TpChar* str)
+{
+    return city_hash_64(str, speed::stringutils::strlen(str) * sizeof(TpChar));
 }
+
+
+}
+
+
+#endif
