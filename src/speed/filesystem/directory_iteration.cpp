@@ -126,7 +126,7 @@ bool directory_iteration::const_iterator::operator ==(const self_type& rhs) cons
 
 bool directory_iteration::const_iterator::open_directory()
 {
-    std::uint64_t ino = speed::system::filesystem::get_file_inode(cur_dir_.c_str());
+    auto ino = speed::system::filesystem::get_file_inode(cur_dir_.c_str());
 
     if (current_recursivity_levl_ > composit_->recursivity_levl_ ||
         vistd_inos_.contains(ino) ||

@@ -159,7 +159,7 @@ public:
         std::stack<directory_entity> path_stck_;
 
         /** Set of visited inodes to avoid infinite recursions in case of fs corruptions. */
-        std::set<std::uint64_t> vistd_inos_;
+        std::set<speed::system::filesystem::inode_t> vistd_inos_;
 
         /** Pointer to the composite object. */
         const directory_iteration* composit_;
