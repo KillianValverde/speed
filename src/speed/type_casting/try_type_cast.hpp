@@ -454,7 +454,7 @@ std::enable_if_t<
 >
 __try_type_cast(const TpSource& arg, TpTarget* res, std::error_code* err_code) noexcept
 {
-    if (!speed::system::codecs::convert_c_string_to_wstring(arg, res))
+    if (!speed::system::codecs::convert_c_str_to_wstring(arg, res))
     {
         assign_type_casting_error_code(
                 static_cast<int>(error_codes::RANGE_ERROR),
@@ -513,7 +513,7 @@ std::enable_if_t<
 >
 __try_type_cast(const TpSource& arg, TpTarget* res, std::error_code* err_code) noexcept
 {
-    if (!speed::system::codecs::convert_w_string_to_string(arg, res))
+    if (!speed::system::codecs::convert_w_str_to_string(arg, res))
     {
         assign_type_casting_error_code(
                 static_cast<int>(error_codes::RANGE_ERROR),
