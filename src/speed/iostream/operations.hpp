@@ -203,7 +203,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_default_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::DEFAULT);
     return os;
 }
@@ -219,7 +219,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_black_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::BLACK);
     return os;
 }
@@ -235,7 +235,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_red_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::RED);
     return os;
 }
@@ -251,7 +251,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_green_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::GREEN);
     return os;
 }
@@ -267,7 +267,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_brown_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::BROWN);
     return os;
 }
@@ -283,7 +283,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_blue_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::BLUE);
     return os;
 }
@@ -299,7 +299,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_purple_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::PURPLE);
     return os;
 }
@@ -315,7 +315,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_cyan_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::CYAN);
     return os;
 }
@@ -331,7 +331,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_light_gray_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::LIGHT_GRAY);
     return os;
 }
@@ -347,8 +347,8 @@ inline std::basic_ostream<TpChar, TpTraits>& set_dark_gray_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
-            stdout, speed::system::terminal::text_attribute::DARK_GRAY);
+    speed::system::terminal::set_foreground_text_attribute(
+            stdout, speed::system::terminal::text_attribute::GRAY);
     return os;
 }
 
@@ -363,7 +363,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_light_red_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::LIGHT_RED);
     return os;
 }
@@ -379,7 +379,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_light_green_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::LIGHT_GREEN);
     return os;
 }
@@ -395,7 +395,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_yellow_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::YELLOW);
     return os;
 }
@@ -411,7 +411,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_light_blue_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::LIGHT_BLUE);
     return os;
 }
@@ -427,7 +427,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_light_purple_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::LIGHT_PURPLE);
     return os;
 }
@@ -443,7 +443,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_light_cyan_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::LIGHT_CYAN);
     return os;
 }
@@ -459,7 +459,7 @@ inline std::basic_ostream<TpChar, TpTraits>& set_white_text(
         std::basic_ostream<TpChar, TpTraits>& os
 )
 {
-    speed::system::terminal::set_text_attribute(
+    speed::system::terminal::set_foreground_text_attribute(
             stdout, speed::system::terminal::text_attribute::WHITE);
     return os;
 }
