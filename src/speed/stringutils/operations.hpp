@@ -140,6 +140,82 @@ TpDestinationChar* strncpy(
 
 
 /**
+ * @brief       Copies the C string pointed by source at the end of the array pointed by
+ *              destination, including the terminating null character (and stopping at that point).
+ * @param       dest : Pointer to the destination array where the content will to be appended.
+ * @param       src : C string to be appended.
+ * @return      The pointer to the destination array.
+ */
+template<typename TpDestinationChar, typename TpSourceChar>
+TpDestinationChar* strcat(TpDestinationChar* dest, const TpSourceChar* src) noexcept
+{
+    TpDestinationChar* orig_dest = dest;
+    
+    if (dest != nullptr && src != nullptr)
+    {
+        while (*dest != '\0')
+        {
+            dest++;
+        }
+        while (*src != '\0')
+        {
+            *dest++ = *src++;
+        }
+    
+        *dest = '\0';
+    }
+    
+    return orig_dest;
+}
+
+
+/**
+ * @brief       Appended the C string first cnt characters of source to destination. If the end of
+ *              the source C string (which is signaled by a null-character) is found before num
+ *              characters have been copied, destination is padded with zeros until a total of nbr
+ *              characters have been written to it.
+ * @param       dest : Pointer to the destination array where the content will to be appended.
+ * @param       src : C string to be appended.
+ * @param       nbr : Maximum number of characters to be copied from source.
+ * @return      The pointer to the destination array
+ */
+template<typename TpDestinationChar, typename TpSourceChar>
+TpDestinationChar* strncat(
+        TpDestinationChar* dest,
+        const TpSourceChar* src,
+        std::size_t nbr
+) noexcept
+{
+    TpDestinationChar* orig_dest = dest;
+    TpDestinationChar* end_dest;
+    
+    if (dest != nullptr && src != nullptr)
+    {
+        while (*dest != '\0')
+        {
+            dest++;
+        }
+        
+        end_dest = dest + nbr;
+        
+        while (*src != '\0' && dest != end_dest)
+        {
+            *dest++ = *src++;
+        }
+        
+        while (dest != end_dest)
+        {
+            *dest++ = '\0';
+        }
+        
+        *dest = '\0';
+    }
+    
+    return orig_dest;
+}
+
+
+/**
  * @brief       Compare the target string to the destination.
  * @param       src : Comparation source.
  * @param       trg : Comparation target.
