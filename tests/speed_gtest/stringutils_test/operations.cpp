@@ -70,6 +70,30 @@ TEST(stringutils_operations, strncpy)
 }
 
 
+TEST(stringutils_operations, strcat)
+{
+    char str1[32] = "hello";
+    wchar_t str2[32] = L", world";
+    std::string str_res = "hello, world";
+    
+    speed::stringutils::strcat(str1, str2);
+    
+    EXPECT_TRUE(str_res == str1);
+}
+
+
+TEST(stringutils_operations, strncat)
+{
+    char str1[32] = "hello";
+    wchar_t str2[32] = L", world";
+    std::string str_res = "hello, ";
+    
+    speed::stringutils::strncat(str1, str2, 2);
+    
+    EXPECT_TRUE(str_res == str1);
+}
+
+
 TEST(stringutils_operations, strcmp)
 {
     char str1[32] = "kkk";
