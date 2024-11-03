@@ -92,14 +92,6 @@ TEST(system_filesystem, file_exists)
 }
 
 
-TEST(system_filesystem, get_modification_time)
-{
-    speed::system::time::system_time system_tme;
-    
-    ASSERT_TRUE(speed::system::filesystem::get_modification_time(".", &system_tme));
-}
-
-
 TEST(system_filesystem, get_file_inode)
 {
     ASSERT_TRUE(speed::system::filesystem::get_file_inode(".") != ~0ull);
@@ -111,18 +103,30 @@ TEST(system_filesystem, get_file_inode)
 
 TEST(system_filesystem, get_file_uid)
 {
-    ASSERT_TRUE(speed::system::filesystem::get_file_uid(".") != -1);
+    auto file_uid = speed::system::filesystem::get_file_uid(".");
+    auto user_uid = speed::system::process::get_uid();
+    ASSERT_TRUE(file_uid == user_uid && file_uid != -1);
 }
 
 
 TEST(system_filesystem, get_file_gid)
 {
-    ASSERT_TRUE(speed::system::filesystem::get_file_gid(".") != -1);
+    auto file_gid = speed::system::filesystem::get_file_gid(".");
+    auto user_gid = speed::system::process::get_gid();
+    ASSERT_TRUE(file_gid == user_gid && file_gid != -1);
+}
+
+
+TEST(system_filesystem, get_modification_time)
+{
+    speed::system::time::system_time system_tme;
+    ASSERT_TRUE(speed::system::filesystem::get_modification_time(".", &system_tme));
 }
 
 
 TEST(system_filesystem, get_temporal_path)
 {
+    auto s = speed::system::filesystem::get_temporal_path();
     ASSERT_TRUE(speed::system::filesystem::get_temporal_path() != nullptr);
 }
 
