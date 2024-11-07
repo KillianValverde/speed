@@ -308,8 +308,11 @@ public:
         {
             flg = regex_type::ECMAScript;
         }
-        regex_to_mtch_.assign(speed::type_casting::type_cast<string_type>(
-                std::forward<TpString_>(regex_to_mtch)), flg);
+        
+        regex_to_mtch_str_ = speed::type_casting::type_cast<string_type>(
+                std::forward<TpString_>(regex_to_mtch));
+        regex_to_mtch_.assign(regex_to_mtch_str_, flg);
+        
         return *this;
     }
 
