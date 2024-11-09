@@ -18,38 +18,28 @@
  */
 
 /**
- * @file        speed/filesystem/filesystem.hpp
- * @brief       filesystem main header.
+ * @file        speed/filesystem/operations.hpp
+ * @brief       filesystem functions header.
  * @author      Killian Valverde
- * @date        2018/11/25
+ * @date        2024/11/09
  */
 
-#ifndef SPEED_FILESYSTEM_FILESYSTEM_HPP
-#define SPEED_FILESYSTEM_FILESYSTEM_HPP
-
-#include "forward_declarations.hpp"
-#include "directory_iteration.hpp"
-#include "operations.hpp"
-#include "valid_path.hpp"
+#ifndef SPEED_FILESYSTEM_OPERATIONS_HPP
+#define SPEED_FILESYSTEM_OPERATIONS_HPP
 
 
-namespace speed {
+namespace speed::filesystem {
 
 
-/**
- * @brief       Contains filesystem interaction resources.
- */
-namespace filesystem {}
-
-
-#ifndef SPEED_DISABLE_ALIAS
-
-/**
- * @brief       Contains filesystem interaction resources.
- */
-namespace fsys = filesystem;
-
-#endif
+inline std::filesystem::path get_normalized_path(const std::filesystem::path& pth)
+{
+    auto path_str = pth.native();
+    
+    std::replace(path_str.begin(), path_str.end(), SPEED_SYSTEM_FILESYSTEM_ALT_SLASH_CHAR,
+                 SPEED_SYSTEM_FILESYSTEM_SLASH_CHAR);
+    
+    return {std::move(path_str)};
+}
 
 
 }
