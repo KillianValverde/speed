@@ -1819,8 +1819,8 @@ private:
         }
 
         print_commands_usage();
-        print_constraints_usage();
         print_values_usage();
+        print_constraints_usage();
 
         std::cout << "\n\n";
     }

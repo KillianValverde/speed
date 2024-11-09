@@ -273,6 +273,19 @@ public:
     /**
      * @brief       Prin the usage.
      */
+    void print_name() override
+    {
+        if (kys_.empty())
+        {
+            throw key_not_found_exception();
+        }
+        
+        std::cout << kys_.front().get_string();
+    }
+
+    /**
+     * @brief       Prin the usage.
+     */
     void print_usage() override
     {
         if (kys_.empty())

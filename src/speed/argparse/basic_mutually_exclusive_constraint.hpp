@@ -138,7 +138,9 @@ public:
      * @brief       Move constructor.
      * @param       rhs : Object to move.
      */
-    basic_mutually_exclusive_constraint(basic_mutually_exclusive_constraint&& rhs) noexcept = default;
+    basic_mutually_exclusive_constraint(
+            basic_mutually_exclusive_constraint&& rhs
+    ) noexcept = default;
     
     /**
      * @brief       Destructor.
@@ -150,14 +152,18 @@ public:
      * @param       rhs : Object to copy.
      * @return      The object who call the method.
      */
-    basic_mutually_exclusive_constraint& operator =(const basic_mutually_exclusive_constraint& rhs) = delete;
+    basic_mutually_exclusive_constraint& operator =(
+            const basic_mutually_exclusive_constraint& rhs
+    ) = delete;
     
     /**
      * @brief       Move assignment operator.
      * @param       rhs : Object to move.
      * @return      The object who call the method.
      */
-    basic_mutually_exclusive_constraint& operator =(basic_mutually_exclusive_constraint&& rhs) noexcept = default;
+    basic_mutually_exclusive_constraint& operator =(
+            basic_mutually_exclusive_constraint&& rhs
+    ) noexcept = default;
     
     /**
      * @brief       Allows knowing whether a relational constraint is violed.
@@ -188,18 +194,17 @@ public:
      */
     void print_usage() override
     {
-        std::size_t cnt = 0;
         auto& bse_args = base_type::get_base_args();
         auto bse_arg_it = bse_args.begin();
 
         std::cout << "{";
-        (*bse_arg_it)->print_usage();
+        (*bse_arg_it)->print_name();
         ++bse_arg_it;
 
         for (; bse_arg_it != bse_args.end(); ++bse_arg_it)
         {
-            std::cout << " ⊕ ";
-            (*bse_arg_it)->print_usage();
+            std::cout << " !^ ";
+            (*bse_arg_it)->print_name();
         }
 
         std::cout << "}";

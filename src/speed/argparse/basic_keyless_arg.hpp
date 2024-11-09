@@ -151,6 +151,14 @@ public:
     {
         return "Value";
     }
+
+    /**
+     * @brief       Prin the usage.
+     */
+    void print_name() override
+    {
+        std::cout << usage_ky_;
+    }
     
     /**
      * @brief       Print the argument usage ID in standard output for usage sentence.

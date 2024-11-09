@@ -340,7 +340,7 @@ public:
         print_values();
         print_epilog();
 
-        std::cout << std::flush;
+        std::flush(std::cout);
     }
 
     /**

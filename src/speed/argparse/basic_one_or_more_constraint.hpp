@@ -46,7 +46,6 @@
 namespace speed::argparse {
 
 
-// TODO: Change the display characteres to not unicod ones. Too many problems on windows.
 /**
  * @brief       Class used to represent a constraint that verifies that at least one of the
  *              specified arguments has been found in the program call.
@@ -182,18 +181,17 @@ public:
      */
     void print_usage() override
     {
-        std::size_t cnt = 0;
         auto& bse_args = base_type::get_base_args();
         auto bse_arg_it = bse_args.begin();
 
         std::cout << "{";
-        (*bse_arg_it)->print_usage();
+        (*bse_arg_it)->print_name();
         ++bse_arg_it;
 
         for (; bse_arg_it != bse_args.end(); ++bse_arg_it)
         {
-            std::cout << " ∨ ";
-            (*bse_arg_it)->print_usage();
+            std::cout << " | ";
+            (*bse_arg_it)->print_name();
         }
 
         std::cout << "}";

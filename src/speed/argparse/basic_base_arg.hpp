@@ -489,6 +489,11 @@ public:
     ) = 0;
 
     /**
+     * @brief       Print the name of the argument in the standard output.
+    */
+    virtual void print_name() = 0;
+
+    /**
      * @brief       Print the usage in the standard output.
     */
     virtual void print_usage() = 0;
