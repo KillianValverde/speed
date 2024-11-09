@@ -65,8 +65,7 @@ template<typename TpChar>
  * @return      The length of the string.
  */
 template<typename TpChar, typename TpCharTraits, typename TpCharAlloc>
-[[nodiscard]] typename std::basic_string<TpChar, TpCharTraits, TpCharAlloc>::size_type
-strlen(
+[[nodiscard]] auto strlen(
         const std::basic_string<TpChar, TpCharTraits, TpCharAlloc>& str
 ) noexcept
 {
@@ -427,7 +426,7 @@ template<typename TpChar, typename TpIntegral>
  * @brief       Erase the characters after the last specified value in the C string.
  * @param       str : The C string.
  * @param       val : The value.
- * @param       erase_val : If it's true the specified value is also erased.
+ * @param       erase_val : If it's true the last specified value is also erased.
  * @return      If function was successful a pointer to the last character of the C string is
  *              returned, otherwise a null pointer is returned.
  */
@@ -595,6 +594,53 @@ bool strdisclastif(TpChar* str, const TpIntegral val) noexcept
     }
     
     return false;
+}
+
+
+/**
+ * @brief       Escapes special regex characters in a string.
+ * @param       str : Pointer to a null-terminated C-style string.
+ * @return      A `std::basic_string` of type `TpChar` with all special regex characters escaped.
+ */
+template<typename TpChar>
+[[nodiscard]] auto strescregex(const TpChar* str) noexcept
+{
+    using char_type = TpChar;
+    using string_type = std::basic_string<char_type>;
+    
+    const std::array<char_type, 14> special_chars =
+            {'[', '\\', '^', '$', '.', '|', '?', '*', '+', '(', ')', '{', '}', ']'};
+    
+    string_type res;
+    
+    if (str != nullptr)
+    {
+        while (*str != '\0')
+        {
+            if (std::find(special_chars.begin(), special_chars.end(), *str) != special_chars.end())
+            {
+                res += '\\';
+            }
+            
+            res += *str++;
+        }
+    }
+    
+    return res;
+}
+
+
+/**
+ * @brief       Escapes special regex characters in a string.
+ * @param       str : The input `std::basic_string` containing characters to be escaped.
+ * @return      A `std::basic_string` of type `TpChar` with all special regex characters escaped.
+ */
+template<typename TpChar, typename TpCharTraits, typename TpCharAlloc>
+[[nodiscard]] auto strescregex(
+        const std::basic_string<TpChar, TpCharTraits, TpCharAlloc>& str
+) noexcept
+{
+    return strescregex(str.c_str());
 }
     
     
