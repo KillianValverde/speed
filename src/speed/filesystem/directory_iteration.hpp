@@ -35,6 +35,7 @@
 #include "../containers/containers.hpp"
 #include "../system/system.hpp"
 #include "../type_casting/type_casting.hpp"
+#include "operations.hpp"
 
 
 namespace speed::filesystem {
@@ -182,7 +183,7 @@ public:
             >
     >
     explicit directory_iteration(TpPath_&& root_pth)
-            : root_pth_(std::forward<TpPath_>(root_pth))
+            : root_pth_(get_normalized_path(std::forward<TpPath_>(root_pth)))
             , regex_to_mtch_()
             , regex_to_mtch_str_(speed::type_casting::type_cast<string_type>("^.*$"))
             , file_typs_(speed::system::filesystem::file_types::ALL)
@@ -190,6 +191,7 @@ public:
             , recursivity_levl_(~0ull)
             , follow_symbolic_lnks_(false)
             , case_sensitve_(false)
+            , inode_trackr_(false)
     {
         regex_to_match(regex_to_mtch_str_);
     }
@@ -246,11 +248,11 @@ public:
      * @param       access_mods : Access modes that the files are mandatory to have.
      * @return      The object who call the method.
      */
-    inline directory_iteration& case_sensitive(bool case_sensitve)
+    inline directory_iteration& case_sensitive(bool enabl)
     {
-        if (case_sensitve_ != case_sensitve)
+        if (case_sensitve_ != enabl)
         {
-            case_sensitve_ = case_sensitve;
+            case_sensitve_ = enabl;
             regex_to_match(regex_to_mtch_str_);
         }
         
@@ -270,12 +272,23 @@ public:
 
     /**
      * @brief       Specify wether or not the symbolic links will be followed.
-     * @param       follow_symbolic_lnks : If true the symbolic links will be followed.
+     * @param       enabl : If true the symbolic links will be followed.
      * @return      The object who call the method.
      */
-    inline directory_iteration& follow_symbolic_links(bool follow_symbolic_lnks)
+    inline directory_iteration& follow_symbolic_links(bool enabl)
     {
-        follow_symbolic_lnks_ = follow_symbolic_lnks;
+        follow_symbolic_lnks_ = enabl;
+        return *this;
+    }
+    
+    /**
+     * @brief       Enables or disables inode tracking to prevent duplicate file entries.
+     * @param       enabl : Set to `true` to enable inode tracking, or `false` to disable it.
+     * @return      The object who call the method.
+     */
+    inline directory_iteration& inode_tracking(bool enabl)
+    {
+        inode_trackr_ = enabl;
         return *this;
     }
 
@@ -340,6 +353,9 @@ private:
     
     /** Specify wheter or not the regex will be case sensitive. */
     bool case_sensitve_;
+    
+    /** Specify wheter or not the inodes will be tracked. */
+    bool inode_trackr_;
 
     friend class const_iterator;
 };

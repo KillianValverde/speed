@@ -108,14 +108,11 @@ directory_iteration::const_iterator::self_type& directory_iteration::const_itera
 
 bool directory_iteration::const_iterator::operator ==(const self_type& rhs) const noexcept
 {
-    auto lhs_ino = path_stck_.empty() ? ~0ull : path_stck_.top().ino;
-    auto rhs_ino = rhs.path_stck_.empty() ? ~0ull : rhs.path_stck_.top().ino;
-
-    if (end_ == rhs.end_)
+    if (end_ && rhs.end_)
     {
         return true;
     }
-    if (composit_ != rhs.composit_ || lhs_ino != rhs_ino)
+    if (composit_ != rhs.composit_ || cur_fle_ != rhs.cur_fle_)
     {
         return false;
     }
@@ -126,10 +123,15 @@ bool directory_iteration::const_iterator::operator ==(const self_type& rhs) cons
 
 bool directory_iteration::const_iterator::open_directory()
 {
-    auto ino = speed::system::filesystem::get_file_inode(cur_dir_.c_str());
+    speed::system::filesystem::inode_t ino;
+    
+    if (composit_->inode_trackr_)
+    {
+        ino = speed::system::filesystem::get_file_inode(cur_dir_.c_str());
+    }
 
     if (current_recursivity_levl_ > composit_->recursivity_levl_ ||
-        vistd_inos_.contains(ino) ||
+        (composit_->inode_trackr_ && vistd_inos_.contains(ino)) ||
         (!composit_->follow_symbolic_lnks_ &&
                 speed::system::filesystem::is_symlink(cur_dir_.c_str())))
     {
@@ -148,7 +150,11 @@ bool directory_iteration::const_iterator::open_directory()
         return false;
     }
 
-    vistd_inos_.emplace(ino);
+    if (composit_->inode_trackr_)
+    {
+        vistd_inos_.emplace(ino);
+    }
+    
     return true;
 }
 
