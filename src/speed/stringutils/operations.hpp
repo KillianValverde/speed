@@ -38,6 +38,85 @@ namespace speed::stringutils {
 
 
 /**
+ * @brief       Compares a string to a pattern with wildcard characters '*' and '?'.
+ * @param       str : Pointer to the string to match.
+ * @param       pattrn : Pointer to the pattern containing wildcards.
+ * @param       case_sensitive : Determines whether the match is case-sensitive
+ *              (default is `false`).
+ * @return      `true` if `str` matches the `pattrn` with wildcards; otherwise, `false`.
+ */
+template<typename TpChar1, typename TpChar2>
+[[nodiscard]] bool matches_wildcard(
+        const TpChar1* str,
+        const TpChar2* pattrn,
+        bool case_sensitive = false
+) noexcept
+{
+    const TpChar1* str_backup = nullptr;
+    const TpChar2* pattrn_backup = nullptr;
+    TpChar1 current_str_ch;
+    TpChar2 current_pattrn_ch;
+    
+    if (str == nullptr || pattrn == nullptr)
+    {
+        return false;
+    }
+
+    while (*str)
+    {
+        current_str_ch = *str;
+        current_pattrn_ch = *pattrn;
+        
+        if (!case_sensitive)
+        {
+            if (current_str_ch >= 'A' && current_str_ch <= 'Z')
+            {
+                current_str_ch += 'a' - 'A';
+            }
+            if (current_pattrn_ch >= 'A' && current_pattrn_ch <= 'Z')
+            {
+                current_pattrn_ch += 'a' - 'A';
+            }
+        }
+        
+        if (current_pattrn_ch == '*')
+        {
+            pattrn++;
+            
+            if (current_pattrn_ch == '\0')
+            {
+                return true;
+            }
+            
+            pattrn_backup = pattrn;
+            str_backup = str;
+        }
+        else if (current_pattrn_ch == '?' || current_pattrn_ch == current_str_ch)
+        {
+            pattrn++;
+            str++;
+        }
+        else if (str_backup)
+        {
+            pattrn = pattrn_backup;
+            str = ++str_backup;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    while (*pattrn == '*')
+    {
+        pattrn++;
+    }
+
+    return *pattrn == '\0';
+}
+
+
+/**
  * @brief       Returns the length of a C string str.
  * @param       str : A C string.
  * @return      The length of the C string.
