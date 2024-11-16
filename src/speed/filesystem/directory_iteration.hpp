@@ -149,6 +149,41 @@ public:
          */
         bool is_file_valid();
 
+        /**
+         * @brief       Compares two strings up to a specified number of characters.
+         * @param       src : Pointer to the source string to compare.
+         * @param       trg : Pointer to the target string to compare against.
+         * @param       nbr : The maximum number of characters to compare.
+         * @return      `0` if the strings are equal up to `nbr` characters. A negative value if
+         *              `src` is lexicographically less than `trg`. A positive value if `src` is
+         *              lexicographically greater than `trg`.
+         */
+        int strncmp(
+                const char_type* src,
+                const char_type* trg,
+                std::size_t nbr
+        ) const noexcept;
+        
+        /**
+         * @brief       Searches for the first occurrence of a substring in a string.
+         * @param       str : The null-terminated string to search in.
+         * @param       substr : The null-terminated substring to search for.
+         * @return      Pointer to the first occurrence of `substr` in `str` if found. `nullptr` if
+         *              `substr` is not found. If `substr` is an empty string, returns `str`.
+         */
+        const char_type* strstr(const char_type* str, const char_type* substr) const noexcept;
+
+        /**
+         * @brief       Compares a string to a pattern with wildcard characters '*' and '?'.
+         * @param       str : Pointer to the string to match.
+         * @param       pattrn : Pointer to the pattern containing wildcards.
+         * @return      `true` if `str` matches the `pattrn` with wildcards; otherwise, `false`.
+         */
+        [[nodiscard]] bool matches_wildcard(
+                const char_type* str,
+                const char_type* pattrn
+        ) noexcept;
+
     private:
         /** Current directory. */
         std::filesystem::path cur_dir_;
@@ -157,7 +192,7 @@ public:
         std::filesystem::path cur_fle_;
 
         /** Stack of directories entities used to explore recursivelly the filesystem. */
-        std::stack<directory_entity> path_stck_;
+        std::stack<directory_entity> directory_entity_stck_;
 
         /** Set of visited inodes to avoid infinite recursions in case of fs corruptions. */
         std::set<speed::system::filesystem::inode_t> vistd_inos_;
@@ -184,16 +219,17 @@ public:
     >
     explicit directory_iteration(TpPath_&& root_pth)
             : root_pth_(get_normalized_path(std::forward<TpPath_>(root_pth)))
+            , substring_to_mtch_()
+            , wildcard_to_mtch_()
             , regex_to_mtch_()
-            , regex_to_mtch_str_(speed::type_casting::type_cast<string_type>("^.*$"))
-            , file_typs_(speed::system::filesystem::file_types::ALL)
-            , access_mods_(speed::system::filesystem::access_modes::READ)
+            , regex_to_mtch_str_()
+            , file_typs_(speed::system::filesystem::file_types::NIL)
+            , access_mods_(speed::system::filesystem::access_modes::NIL)
             , recursivity_levl_(~0ull)
             , follow_symbolic_lnks_(false)
             , case_sensitve_(false)
             , inode_trackr_(false)
     {
-        regex_to_match(regex_to_mtch_str_);
     }
 
     /**
@@ -244,8 +280,9 @@ public:
     }
 
     /**
-     * @brief       Specify the access modes that the files are mandatory to have.
-     * @param       access_mods : Access modes that the files are mandatory to have.
+     * @brief       Sets the case sensitivity option for directory iteration.
+     * @param       enabl : `true` to enable case-sensitive matching, `false` for case-insensitive
+     *              matching.
      * @return      The object who call the method.
      */
     inline directory_iteration& case_sensitive(bool enabl)
@@ -253,7 +290,11 @@ public:
         if (case_sensitve_ != enabl)
         {
             case_sensitve_ = enabl;
-            regex_to_match(regex_to_mtch_str_);
+            
+            if (!regex_to_mtch_str_.empty())
+            {
+                update_regex();
+            }
         }
         
         return *this;
@@ -311,33 +352,65 @@ public:
     template<typename TpString_>
     inline directory_iteration& regex_to_match(TpString_&& regex_to_mtch)
     {
-        typename regex_type::flag_type flg;
-        
-        if (!case_sensitve_)
-        {
-            flg = regex_type::ECMAScript | regex_type::icase;
-        }
-        else
-        {
-            flg = regex_type::ECMAScript;
-        }
-        
         regex_to_mtch_str_ = speed::type_casting::type_cast<string_type>(
                 std::forward<TpString_>(regex_to_mtch));
-        regex_to_mtch_.assign(regex_to_mtch_str_, flg);
+        
+        update_regex();
         
         return *this;
     }
 
+    /**
+     * @brief       Specify the substring that all the file names must have.
+     * @param       substring_to_mtch : Wildcard string that all the file names have to match.
+     * @return      The object who call the method.
+     */
+    template<typename TpString_>
+    inline directory_iteration& substring_to_match(TpString_&& substring_to_mtch)
+    {
+        substring_to_mtch_ = speed::type_casting::type_cast<string_type>(
+                std::forward<TpString_>(substring_to_mtch));
+        
+        return *this;
+    }
+
+    /**
+     * @brief       Specify the wildcard that all the file names have to match.
+     * @param       wildcard_to_mtch : Wildcard string that all the file names have to match.
+     * @return      The object who call the method.
+     */
+    template<typename TpString_>
+    inline directory_iteration& wildcard_to_match(TpString_&& wildcard_to_mtch)
+    {
+        wildcard_to_mtch_ = speed::type_casting::type_cast<string_type>(
+                std::forward<TpString_>(wildcard_to_mtch));
+        
+        return *this;
+    }
+    
+private:
+    /**
+     * @brief       Specify the regex that all the file names have to match.
+     * @param       regex_to_mtch : Regex string that all the file names have to match.
+     * @return      The object who call the method.
+     */
+    void update_regex();
+
 private:
     /** The root directory of the iteration. */
     std::filesystem::path root_pth_;
-
-    /** Regex that all the iterated files have to match. */
-    regex_type regex_to_mtch_;
+    
+    /** Wildcard that all the iterated files have to match. */
+    string_type substring_to_mtch_;
+    
+    /** Wildcard that all the iterated files have to match. */
+    string_type wildcard_to_mtch_;
 
     /** Regex that all the iterated files have to match. */
     string_type regex_to_mtch_str_;
+
+    /** Regex that all the iterated files have to match. */
+    regex_type regex_to_mtch_;
 
     /** Maximum level of recursivity allowed. */
     std::uint64_t recursivity_levl_;
