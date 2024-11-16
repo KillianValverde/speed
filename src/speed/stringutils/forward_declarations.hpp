@@ -18,36 +18,27 @@
  */
 
 /**
- * @file        speed/stringutils/stringutils.hpp
- * @brief       stringutils main header.
+ * @file        speed/stringutils/forward_declarations.hpp
+ * @brief       forward_declarations header.
  * @author      Killian Valverde
- * @date        2016/01/08
+ * @date        2024/11/16
  */
 
-#ifndef SPEED_STRINGUTILS_STRINGUTILS_HPP
-#define SPEED_STRINGUTILS_STRINGUTILS_HPP
+#ifndef SPEED_STRINGUTILS_FORWARD_DECLARATIONS_HPP
+#define SPEED_STRINGUTILS_FORWARD_DECLARATIONS_HPP
 
-#include "forward_declarations.hpp"
-#include "operations.hpp"
-
-
-namespace speed {
+#include <system_error>
 
 
-/**
- * @brief       Contains resources for common strings operations.
- */
-namespace stringutils {}
+namespace speed::stringutils {
 
 
-#ifndef SPEED_DISABLE_ALIAS
+template<typename TpChar, typename TpIntegral>
+[[nodiscard]] TpChar* strrchr(TpChar* str, const TpIntegral val) noexcept;
 
-/**
- * @brief       Contains resources for common strings operations.
- */
-namespace str = stringutils;
 
-#endif
+template<typename TpChar>
+TpChar tolower(TpChar ch, const std::locale& loc = std::locale());
 
 
 }

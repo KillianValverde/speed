@@ -27,14 +27,63 @@
 #ifndef SPEED_STRINGUTILS_OPERATIONS_HPP
 #define SPEED_STRINGUTILS_OPERATIONS_HPP
 
+#include <cwctype>
 #include <string>
 #include <type_traits>
 #include <vector>
 
+#include "forward_declarations.hpp"
 #include "../type_traits/type_traits.hpp"
 
 
 namespace speed::stringutils {
+
+
+/**
+ * @brief       Escapes special regex characters in a string.
+ * @param       str : Pointer to a null-terminated C-style string.
+ * @return      A `std::basic_string` of type `TpChar` with all special regex characters escaped.
+ */
+template<typename TpChar>
+[[nodiscard]] auto escape_regex_special_characters(const TpChar* str) noexcept
+{
+    using char_type = TpChar;
+    using string_type = std::basic_string<char_type>;
+    
+    const std::array<char_type, 14> special_chars =
+            {'[', '\\', '^', '$', '.', '|', '?', '*', '+', '(', ')', '{', '}', ']'};
+    
+    string_type res;
+    
+    if (str != nullptr)
+    {
+        while (*str != '\0')
+        {
+            if (std::find(special_chars.begin(), special_chars.end(), *str) != special_chars.end())
+            {
+                res += '\\';
+            }
+            
+            res += *str++;
+        }
+    }
+    
+    return res;
+}
+
+
+/**
+ * @brief       Escapes special regex characters in a string.
+ * @param       str : The input `std::basic_string` containing characters to be escaped.
+ * @return      A `std::basic_string` of type `TpChar` with all special regex characters escaped.
+ */
+template<typename TpChar, typename TpCharTraits, typename TpCharAlloc>
+[[nodiscard]] auto escape_regex_special_characters(
+        const std::basic_string<TpChar, TpCharTraits, TpCharAlloc>& str
+) noexcept
+{
+    return escape_regex_special_characters(str.c_str());
+}
 
 
 /**
@@ -48,14 +97,11 @@ namespace speed::stringutils {
 template<typename TpChar1, typename TpChar2>
 [[nodiscard]] bool matches_wildcard(
         const TpChar1* str,
-        const TpChar2* pattrn,
-        bool case_sensitive = false
+        const TpChar2* pattrn
 ) noexcept
 {
     const TpChar1* str_backup = nullptr;
     const TpChar2* pattrn_backup = nullptr;
-    TpChar1 current_str_ch;
-    TpChar2 current_pattrn_ch;
     
     if (str == nullptr || pattrn == nullptr)
     {
@@ -64,26 +110,11 @@ template<typename TpChar1, typename TpChar2>
 
     while (*str)
     {
-        current_str_ch = *str;
-        current_pattrn_ch = *pattrn;
-        
-        if (!case_sensitive)
-        {
-            if (current_str_ch >= 'A' && current_str_ch <= 'Z')
-            {
-                current_str_ch += 'a' - 'A';
-            }
-            if (current_pattrn_ch >= 'A' && current_pattrn_ch <= 'Z')
-            {
-                current_pattrn_ch += 'a' - 'A';
-            }
-        }
-        
-        if (current_pattrn_ch == '*')
+        if (*pattrn == '*')
         {
             pattrn++;
             
-            if (current_pattrn_ch == '\0')
+            if (*pattrn == '\0')
             {
                 return true;
             }
@@ -91,7 +122,7 @@ template<typename TpChar1, typename TpChar2>
             pattrn_backup = pattrn;
             str_backup = str;
         }
-        else if (current_pattrn_ch == '?' || current_pattrn_ch == current_str_ch)
+        else if (*pattrn == '?' || *pattrn == *str)
         {
             pattrn++;
             str++;
@@ -113,6 +144,160 @@ template<typename TpChar1, typename TpChar2>
     }
 
     return *pattrn == '\0';
+}
+
+
+/**
+ * @brief       Copies the C string pointed by source at the end of the array pointed by
+ *              destination, including the terminating null character (and stopping at that point).
+ * @param       dest : Pointer to the destination array where the content will to be appended.
+ * @param       src : C string to be appended.
+ * @return      The pointer to the destination array.
+ */
+template<typename TpDestinationChar, typename TpSourceChar>
+TpDestinationChar* strcat(TpDestinationChar* dest, const TpSourceChar* src) noexcept
+{
+    TpDestinationChar* orig_dest = dest;
+    
+    if (dest != nullptr && src != nullptr)
+    {
+        while (*dest != '\0')
+        {
+            dest++;
+        }
+        while (*src != '\0')
+        {
+            *dest++ = *src++;
+        }
+    
+        *dest = '\0';
+    }
+    
+    return orig_dest;
+}
+
+
+/**
+ * @brief       Returns a pointer to the first occurrence of a value in the C string str.
+ * @param       str : The C string.
+ * @param       val : Character to be located.
+ * @return      A pointer to the first occurrence of val in str. If the character is not
+ *              found, the function returns a null pointer.
+ */
+template<typename TpChar, typename TpIntegral>
+[[nodiscard]] TpChar* strchr(TpChar* str, const TpIntegral val) noexcept
+{
+    if (str != nullptr)
+    {
+        while (*str != '\0')
+        {
+            if (*str == val)
+            {
+                return str;
+            }
+            
+            ++str;
+        }
+    }
+    
+    return nullptr;
+}
+
+
+/**
+ * @brief       Compare the target string to the destination.
+ * @param       src : Comparation source.
+ * @param       trg : Comparation target.
+ * @return      If the first character that does not match has a lower value in source than in
+ *              target <0 is returned, if the contents of both strings are equal 0 is returned, and
+ *              if the first character that does not match has a greater value in source than in
+ *              target >0 is returned.
+ */
+template<typename TpSourceChar, typename TpTargetChar>
+[[nodiscard]] int strcmp(const TpSourceChar* src, const TpTargetChar* trg) noexcept
+{
+    if (src == nullptr)
+    {
+        return (trg == nullptr) ? 0 : -1;
+    }
+    if (trg == nullptr)
+    {
+        return 1;
+    }
+    
+    for (; *src != '\0' && *trg != '\0'; ++src, ++trg)
+    {
+        if (*src != *trg)
+        {
+            return *src < *trg ? -1 : 1;
+        }
+    }
+    
+    if (*src == '\0')
+    {
+        return (*trg == '\0') ? 0 : -1;
+    }
+    return 1;
+}
+
+
+/**
+ * @brief       Copies the C string pointed by source into the array pointed by destination,
+ *              including the terminating null character (and stopping at that point).
+ * @param       dest : Pointer to the destination array where the content is to be copied.
+ * @param       src : C string to be copied.
+ * @return      The pointer to the destination array.
+ */
+template<typename TpDestinationChar, typename TpSourceChar>
+TpDestinationChar* strcpy(TpDestinationChar* dest, const TpSourceChar* src) noexcept
+{
+    TpDestinationChar* orig_dest = dest;
+    
+    if (dest != nullptr && src != nullptr)
+    {
+        while (*src != '\0')
+        {
+            *dest++ = *src++;
+        }
+    
+        *dest = '\0';
+    }
+    
+    return orig_dest;
+}
+
+
+/**
+ * @brief       Erase the characters after the last specified value in the C string.
+ * @param       str : The C string.
+ * @param       val : The value.
+ * @param       erase_val : If it's true the last specified value is also erased.
+ * @return      If function was successful a pointer to the last character of the C string is
+ *              returned, otherwise a null pointer is returned.
+ */
+template<typename TpChar, typename TpIntegral>
+TpChar* strcut(TpChar* str, const TpIntegral val, bool erase_val = false) noexcept
+{
+    TpChar* lst;
+    
+    if (str != nullptr)
+    {
+        if ((lst = stringutils::strrchr(str, val)) != nullptr)
+        {
+            if (erase_val)
+            {
+                *lst = '\0';
+            }
+            else
+            {
+                lst[1] = '\0';
+            }
+
+            return lst;
+        }
+    }
+    
+    return nullptr;
 }
 
 
@@ -149,101 +334,6 @@ template<typename TpChar, typename TpCharTraits, typename TpCharAlloc>
 ) noexcept
 {
     return str.length();
-}
-
-
-/**
- * @brief       Copies the C string pointed by source into the array pointed by destination,
- *              including the terminating null character (and stopping at that point).
- * @param       dest : Pointer to the destination array where the content is to be copied.
- * @param       src : C string to be copied.
- * @return      The pointer to the destination array.
- */
-template<typename TpDestinationChar, typename TpSourceChar>
-TpDestinationChar* strcpy(TpDestinationChar* dest, const TpSourceChar* src) noexcept
-{
-    TpDestinationChar* orig_dest = dest;
-    
-    if (dest != nullptr && src != nullptr)
-    {
-        while (*src != '\0')
-        {
-            *dest++ = *src++;
-        }
-    
-        *dest = '\0';
-    }
-    
-    return orig_dest;
-}
-
-
-/**
- * @brief       Copies the C string first cnt characters of source to destination. If the end of the
- *              source C string (which is signaled by a null-character) is found before num
- *              characters have been copied, destination is padded with zeros until a total of nbr
- *              characters have been written to it.
- * @param       dest : Pointer to the 'destination' array where the content is to be copied.
- * @param       src : C string to be copied.
- * @param       nbr : Maximum number of characters to be copied from source.
- * @return      The pointer to the destination array
- */
-template<typename TpDestinationChar, typename TpSourceChar>
-TpDestinationChar* strncpy(
-        TpDestinationChar* dest,
-        const TpSourceChar* src,
-        std::size_t nbr
-) noexcept
-{
-    TpDestinationChar* orig_dest = dest;
-    const TpDestinationChar* const end_dest = orig_dest + nbr;
-    
-    if (dest != nullptr && src != nullptr)
-    {
-        while (*src != '\0' && dest != end_dest)
-        {
-            *dest++ = *src++;
-        }
-        
-        while (dest != end_dest)
-        {
-            *dest++ = '\0';
-        }
-        
-        *dest = '\0';
-    }
-    
-    return orig_dest;
-}
-
-
-/**
- * @brief       Copies the C string pointed by source at the end of the array pointed by
- *              destination, including the terminating null character (and stopping at that point).
- * @param       dest : Pointer to the destination array where the content will to be appended.
- * @param       src : C string to be appended.
- * @return      The pointer to the destination array.
- */
-template<typename TpDestinationChar, typename TpSourceChar>
-TpDestinationChar* strcat(TpDestinationChar* dest, const TpSourceChar* src) noexcept
-{
-    TpDestinationChar* orig_dest = dest;
-    
-    if (dest != nullptr && src != nullptr)
-    {
-        while (*dest != '\0')
-        {
-            dest++;
-        }
-        while (*src != '\0')
-        {
-            *dest++ = *src++;
-        }
-    
-        *dest = '\0';
-    }
-    
-    return orig_dest;
 }
 
 
@@ -294,39 +384,33 @@ TpDestinationChar* strncat(
 
 
 /**
- * @brief       Compare the target string to the destination.
- * @param       src : Comparation source.
- * @param       trg : Comparation target.
- * @return      If the first character that does not match has a lower value in source than in
- *              target <0 is returned, if the contents of both strings are equal 0 is returned, and
- *              if the first character that does not match has a greater value in source than in
- *              target >0 is returned.
+ * @brief       Returns a pointer to the first occurrence of a value in the C string str. Only the
+ *              firs nbr characters will be evaluated.
+ * @param       str : The C string.
+ * @param       val : Character to be located.
+ * @param       nbr : Maximum number of characters in which search.
+ * @return      A pointer to the first occurrence of val in str. If the character is not
+ *              found, the function returns a null pointer.
  */
-template<typename TpSourceChar, typename TpTargetChar>
-[[nodiscard]] int strcmp(const TpSourceChar* src, const TpTargetChar* trg) noexcept
+template<typename TpChar, typename TpIntegral>
+[[nodiscard]] TpChar* strnchr(TpChar* str, const TpIntegral val, std::size_t nbr) noexcept
 {
-    if (src == nullptr)
-    {
-        return (trg == nullptr) ? 0 : -1;
-    }
-    if (trg == nullptr)
-    {
-        return 1;
-    }
+    std::size_t i;
     
-    for (; *src != '\0' && *trg != '\0'; ++src, ++trg)
+    if (str != nullptr)
     {
-        if (*src != *trg)
+        for (i = 0; *str != '\0' && i < nbr; ++i)
         {
-            return *src < *trg ? -1 : 1;
+            if (*str == val)
+            {
+                return str;
+            }
+            
+            ++str;
         }
     }
     
-    if (*src == '\0')
-    {
-        return (*trg == '\0') ? 0 : -1;
-    }
-    return 1;
+    return nullptr;
 }
 
 
@@ -383,60 +467,41 @@ template<typename TpSourceChar, typename TpTargetChar>
 
 
 /**
- * @brief       Returns a pointer to the first occurrence of a value in the C string str.
- * @param       str : The C string.
- * @param       val : Character to be located.
- * @return      A pointer to the first occurrence of val in str. If the character is not
- *              found, the function returns a null pointer.
+ * @brief       Copies the C string first cnt characters of source to destination. If the end of the
+ *              source C string (which is signaled by a null-character) is found before num
+ *              characters have been copied, destination is padded with zeros until a total of nbr
+ *              characters have been written to it.
+ * @param       dest : Pointer to the 'destination' array where the content is to be copied.
+ * @param       src : C string to be copied.
+ * @param       nbr : Maximum number of characters to be copied from source.
+ * @return      The pointer to the destination array
  */
-template<typename TpChar, typename TpIntegral>
-[[nodiscard]] TpChar* strchr(TpChar* str, const TpIntegral val) noexcept
+template<typename TpDestinationChar, typename TpSourceChar>
+TpDestinationChar* strncpy(
+        TpDestinationChar* dest,
+        const TpSourceChar* src,
+        std::size_t nbr
+) noexcept
 {
-    if (str != nullptr)
+    TpDestinationChar* orig_dest = dest;
+    const TpDestinationChar* const end_dest = orig_dest + nbr;
+    
+    if (dest != nullptr && src != nullptr)
     {
-        while (*str != '\0')
+        while (*src != '\0' && dest != end_dest)
         {
-            if (*str == val)
-            {
-                return str;
-            }
-            
-            ++str;
+            *dest++ = *src++;
         }
+        
+        while (dest != end_dest)
+        {
+            *dest++ = '\0';
+        }
+        
+        *dest = '\0';
     }
     
-    return nullptr;
-}
-
-
-/**
- * @brief       Returns a pointer to the first occurrence of a value in the C string str. Only the
- *              firs nbr characters will be evaluated.
- * @param       str : The C string.
- * @param       val : Character to be located.
- * @param       nbr : Maximum number of characters in which search.
- * @return      A pointer to the first occurrence of val in str. If the character is not
- *              found, the function returns a null pointer.
- */
-template<typename TpChar, typename TpIntegral>
-[[nodiscard]] TpChar* strnchr(TpChar* str, const TpIntegral val, std::size_t nbr) noexcept
-{
-    std::size_t i;
-    
-    if (str != nullptr)
-    {
-        for (i = 0; *str != '\0' && i < nbr; ++i)
-        {
-            if (*str == val)
-            {
-                return str;
-            }
-            
-            ++str;
-        }
-    }
-    
-    return nullptr;
+    return orig_dest;
 }
 
 
@@ -498,78 +563,6 @@ template<typename TpChar, typename TpIntegral>
     }
     
     return lst;
-}
-
-
-/**
- * @brief       Searches for the first occurrence of a substring in a string.
- * @param       str : The null-terminated string to search in.
- * @param       substr : The null-terminated substring to search for.
- * @return      Pointer to the first occurrence of `substr` in `str` if found. `nullptr` if
- *              `substr` is not found. If `substr` is an empty string, returns `str`.
- */
-template<typename TpChar>
-const TpChar* strstr(const TpChar* str, const TpChar* substr)
-{
-	std::size_t str_len;
-    std::size_t substr_len;
-
-	substr_len = speed::stringutils::strlen(substr);
- 
-	if (substr_len == 0)
-    {
-        return str;
-    }
-    
-	str_len = speed::stringutils::strlen(str);
- 
-	while (str_len >= substr_len)
-    {
-		str_len--;
-  
-		if (!memcmp(str, substr, substr_len))
-        {
-            return str;
-        }
-        
-		str++;
-	}
- 
-	return nullptr;
-}
-
-
-/**
- * @brief       Erase the characters after the last specified value in the C string.
- * @param       str : The C string.
- * @param       val : The value.
- * @param       erase_val : If it's true the last specified value is also erased.
- * @return      If function was successful a pointer to the last character of the C string is
- *              returned, otherwise a null pointer is returned.
- */
-template<typename TpChar, typename TpIntegral>
-TpChar* strcut(TpChar* str, const TpIntegral val, bool erase_val = false) noexcept
-{
-    TpChar* lst;
-    
-    if (str != nullptr)
-    {
-        if ((lst = stringutils::strrchr(str, val)) != nullptr)
-        {
-            if (erase_val)
-            {
-                *lst = '\0';
-            }
-            else
-            {
-                lst[1] = '\0';
-            }
-
-            return lst;
-        }
-    }
-    
-    return nullptr;
 }
 
 
@@ -636,6 +629,44 @@ template<
     }
     
     return values;
+}
+
+
+/**
+ * @brief       Searches for the first occurrence of a substring in a string.
+ * @param       str : The null-terminated string to search in.
+ * @param       substr : The null-terminated substring to search for.
+ * @return      Pointer to the first occurrence of `substr` in `str` if found. `nullptr` if
+ *              `substr` is not found. If `substr` is an empty string, returns `str`.
+ */
+template<typename TpChar>
+const TpChar* strstr(const TpChar* str, const TpChar* substr)
+{
+	std::size_t str_len;
+    std::size_t substr_len;
+
+	substr_len = speed::stringutils::strlen(substr);
+ 
+	if (substr_len == 0)
+    {
+        return str;
+    }
+    
+	str_len = speed::stringutils::strlen(str);
+ 
+	while (str_len >= substr_len)
+    {
+		str_len--;
+  
+		if (!memcmp(str, substr, substr_len))
+        {
+            return str;
+        }
+        
+		str++;
+	}
+ 
+	return nullptr;
 }
 
 
@@ -714,50 +745,17 @@ bool strdisclastif(TpChar* str, const TpIntegral val) noexcept
 }
 
 
-/**
- * @brief       Escapes special regex characters in a string.
- * @param       str : Pointer to a null-terminated C-style string.
- * @return      A `std::basic_string` of type `TpChar` with all special regex characters escaped.
- */
 template<typename TpChar>
-[[nodiscard]] auto strescregex(const TpChar* str) noexcept
+TpChar tolower(TpChar ch, const std::locale& loc)
 {
-    using char_type = TpChar;
-    using string_type = std::basic_string<char_type>;
-    
-    const std::array<char_type, 14> special_chars =
-            {'[', '\\', '^', '$', '.', '|', '?', '*', '+', '(', ')', '{', '}', ']'};
-    
-    string_type res;
-    
-    if (str != nullptr)
+    if constexpr (std::is_same_v<TpChar, char>)
     {
-        while (*str != '\0')
-        {
-            if (std::find(special_chars.begin(), special_chars.end(), *str) != special_chars.end())
-            {
-                res += '\\';
-            }
-            
-            res += *str++;
-        }
+        return std::tolower(ch, loc);
     }
-    
-    return res;
-}
-
-
-/**
- * @brief       Escapes special regex characters in a string.
- * @param       str : The input `std::basic_string` containing characters to be escaped.
- * @return      A `std::basic_string` of type `TpChar` with all special regex characters escaped.
- */
-template<typename TpChar, typename TpCharTraits, typename TpCharAlloc>
-[[nodiscard]] auto strescregex(
-        const std::basic_string<TpChar, TpCharTraits, TpCharAlloc>& str
-) noexcept
-{
-    return strescregex(str.c_str());
+    else if constexpr (std::is_same_v<TpChar, wchar_t>)
+    {
+        return std::towlower(ch);
+    }
 }
     
     
