@@ -502,6 +502,44 @@ template<typename TpChar, typename TpIntegral>
 
 
 /**
+ * @brief       Searches for the first occurrence of a substring in a string.
+ * @param       str : The null-terminated string to search in.
+ * @param       substr : The null-terminated substring to search for.
+ * @return      Pointer to the first occurrence of `substr` in `str` if found. `nullptr` if
+ *              `substr` is not found. If `substr` is an empty string, returns `str`.
+ */
+template<typename TpChar>
+const TpChar* strstr(const TpChar* str, const TpChar* substr)
+{
+	std::size_t str_len;
+    std::size_t substr_len;
+
+	substr_len = speed::stringutils::strlen(substr);
+ 
+	if (substr_len == 0)
+    {
+        return str;
+    }
+    
+	str_len = speed::stringutils::strlen(str);
+ 
+	while (str_len >= substr_len)
+    {
+		str_len--;
+  
+		if (!memcmp(str, substr, substr_len))
+        {
+            return str;
+        }
+        
+		str++;
+	}
+ 
+	return nullptr;
+}
+
+
+/**
  * @brief       Erase the characters after the last specified value in the C string.
  * @param       str : The C string.
  * @param       val : The value.
