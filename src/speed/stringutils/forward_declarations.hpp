@@ -38,7 +38,7 @@ template<typename TpChar, typename TpIntegral>
 
 
 template<typename TpChar>
-TpChar tolower(TpChar ch, const std::locale& loc = std::locale());
+TpChar tolower(TpChar ch);
 
 
 }

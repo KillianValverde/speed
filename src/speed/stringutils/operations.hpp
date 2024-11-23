@@ -45,7 +45,7 @@ namespace speed::stringutils {
  * @return      A `std::basic_string` of type `TpChar` with all special regex characters escaped.
  */
 template<typename TpChar>
-[[nodiscard]] auto escape_regex_special_characters(const TpChar* str) noexcept
+[[nodiscard]] std::basic_string<TpChar> escape_regex_special_characters(const TpChar* str) noexcept
 {
     using char_type = TpChar;
     using string_type = std::basic_string<char_type>;
@@ -72,6 +72,7 @@ template<typename TpChar>
 }
 
 
+// TODO: The std::basic_string type that is returned is not correct.
 /**
  * @brief       Escapes special regex characters in a string.
  * @param       str : The input `std::basic_string` containing characters to be escaped.
@@ -745,9 +746,17 @@ bool strdisclastif(TpChar* str, const TpIntegral val) noexcept
 }
 
 
+/**
+ * @brief       Converts a character to lowercase using the specified locale.
+ * @param       ch : The character to convert to lowercase.
+ * @param       loc : The locale to use for conversion (applies to `char` type only).
+ * @return      The lowercase equivalent of the input character.
+ */
 template<typename TpChar>
-TpChar tolower(TpChar ch, const std::locale& loc)
+TpChar tolower(TpChar ch)
 {
+    const std::locale& loc = std::locale();
+    
     if constexpr (std::is_same_v<TpChar, char>)
     {
         return std::tolower(ch, loc);
@@ -757,8 +766,24 @@ TpChar tolower(TpChar ch, const std::locale& loc)
         return std::towlower(ch);
     }
 }
+
+
+/**
+ * @brief       Converts all characters in a string to lowercase.
+ * @param       str : The input string to convert.
+ * @return      A new string with all characters converted to lowercase.
+ */
+template<typename TpChar, typename TpCharTraits, typename TpCharAlloc>
+std::basic_string<TpChar, TpCharTraits, TpCharAlloc> tolower(
+        const std::basic_string<TpChar, TpCharTraits, TpCharAlloc>& str)
+{
+    std::basic_string<TpChar, TpCharTraits, TpCharAlloc> lowr = str;
+    std::transform(lowr.begin(), lowr.end(), lowr.begin(), speed::stringutils::tolower<TpChar>);
     
-    
+    return lowr;
+}
+
+
 }
 
 
